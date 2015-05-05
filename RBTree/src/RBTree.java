@@ -1,4 +1,5 @@
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * RBTree
@@ -29,9 +30,19 @@ public class RBTree {
     }
 
     public void insertItems(Iterable<Map.Entry<Integer, String>> items) {
-        for (Map.Entry<Integer, String> entrie : items) {
-            insert(entrie.getKey(), entrie.getValue());
+        for (Map.Entry<Integer, String> item : items) {
+            insert(item.getKey(), item.getValue());
         }
+    }
+
+    public void toMap(Map<Integer, String> map) {
+        //TODO
+    }
+
+    public TreeMap<Integer, String> toTreeMap() {
+        TreeMap<Integer, String> map = new TreeMap<Integer, String>();
+        toMap(map);
+        return map;
     }
 
     /**
