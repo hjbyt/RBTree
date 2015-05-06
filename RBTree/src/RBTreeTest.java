@@ -57,8 +57,8 @@ public class RBTreeTest {
 
     @Test
     public void testSearch() throws Exception {
-        assertEquals(map1.get((Integer)(int)'c'), rb1.search((int)'c'));
-        assertEquals(map1.get((Integer)(int)'z'), rb1.search((int)'z'));
+        assertEquals(map1.get((int)'c'), rb1.search((int)'c'));
+        assertEquals(map1.get((int)'z'), rb1.search((int)'z'));
     }
 
     @Test
@@ -132,4 +132,6 @@ public class RBTreeTest {
             assertEquals(pair.map.size(), pair.rb.size());
         }
     }
+
+    //TODO: add tests for RBNode
 }

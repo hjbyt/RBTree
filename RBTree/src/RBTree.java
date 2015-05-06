@@ -10,9 +10,21 @@ import java.util.TreeMap;
 
 public class RBTree {
 
+    private enum Color {
+        Black,
+        Red,
+    }
+
+    private RBNode root;
+    private int size;
+
+    //TODO: should these be fields of RBNode?
+    static RBNode dummyNode;
+    static RBTree nullNode;
+
     // Default Constructor
     public RBTree() {
-        //TODO
+
     }
 
     public RBTree(Iterable<Map.Entry<Integer, String>> items) {
@@ -51,7 +63,7 @@ public class RBTree {
      * returns true if and only if the tree is empty
      */
     public boolean empty() {
-        return false; // to be replaced by student code
+        return size == 0;
     }
 
     /**
@@ -140,18 +152,43 @@ public class RBTree {
      * postcondition: none
      */
     public int size() {
-        return 42; // to be replaced by student code
+        return size;
     }
 
-    /**
-     * public class RBNode
-     * <p/>
-     * If you wish to implement classes other than RBTree
-     * (for example RBNode), do it in this file, not in
-     * another file.
-     * This is an example which can be deleted if no such classes are necessary.
-     */
-    public class RBNode {
+    private class RBNode {
+
+        public RBNode parent;
+        public RBNode left;
+        public RBNode right;
+        public Color color;
+        public int key;
+        public String item;
+
+        public void setLeft(RBNode node) {
+            //TODO
+        }
+
+        public void setRight(RBNode node) {
+            //TODO
+        }
+
+        // Replace this node with another node and it's subtrees
+        public void transplant(RBNode node) {
+            //TODO
+        }
+
+        // Replace this node with another node, keeping this node's subtrees.
+        public void replace(RBNode node) {
+            //TODO
+        }
+
+        public void rotateLeft() {
+            //TODO
+        }
+
+        public void rotateRight() {
+            //TODO
+        }
 
     }
 
