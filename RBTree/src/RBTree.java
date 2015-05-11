@@ -22,7 +22,7 @@ public class RBTree {
 
     //TODO: should these be fields of RBNode?
     static RBNode dummyNode;
-    static RBTree nullNode;
+    static RBNode nullNode;
 
     // Default Constructor
     public RBTree() {
@@ -78,7 +78,10 @@ public class RBTree {
         return "42";  // to be replaced by student code
     }
     
-    private RBNode getPositionByKey(int k);
+    private RBNode getPositionByKey(int k)
+    {
+        return nullNode;
+    }
     
     private int fixupTree(RBNode toFix) {
     	int colorSwitchCount = 0;
@@ -94,7 +97,7 @@ public class RBTree {
     			} else {
     				if (toFix == toFix.parent.right) {
     					toFix = toFix.parent;
-    					toFix.rotateLeft();;
+    					toFix.rotateLeft();
     				}
     				toFix.parent.color = Color.Black;
     				toFix.parent.parent.color = Color.Red;
@@ -113,7 +116,7 @@ public class RBTree {
     			} else {
     				if (toFix == toFix.parent.left) {
     					toFix = toFix.parent;
-    					toFix.rotateRight(_;
+    					toFix.rotateRight();
     				}
     				toFix.parent.color = Color.Black;
     				toFix.parent.parent.color = Color.Red;
