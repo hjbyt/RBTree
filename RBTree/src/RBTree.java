@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.BiConsumer;
@@ -244,7 +243,7 @@ public class RBTree {
      */
     public int[] keysToArray() {
     	int[] keys = new int[size];
-    	walk(root, new IndexedConsumer<RBNode>((node, index) -> keys[index++] = node.key));
+    	walk(root, new IndexedConsumer<RBNode>((node, index) -> keys[index] = node.key));
     	return keys;
     }
 
@@ -257,7 +256,7 @@ public class RBTree {
      */
     public String[] valuesToArray() {
     	String[] items = new String[size];
-    	walk(root, new IndexedConsumer<RBNode>((node, index) -> items[index++] = node.item));
+    	walk(root, new IndexedConsumer<RBNode>((node, index) -> items[index] = node.item));
     	return items;
     }
 
