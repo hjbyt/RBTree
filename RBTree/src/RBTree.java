@@ -22,20 +22,28 @@ public class RBTree {
         Right,
     }
 
-    private RBNode root;
+    private RBNode rootDummy;
     private int size;
     private RBNode minNode;
     private RBNode maxNode;
+    private RBNode nullNode;
 
-    //TODO: should these be fields of RBNode?
-    private RBNode dummyNode;
-    static RBNode nullNode;
 
     // Default Constructor
     public RBTree() {
-        dummyNode = new RBNode();
-        dummyNode.color = Color.Black;
-        dummyNode.parent = dummyNode;
+        // Create dummy node
+        rootDummy = new RBNode(Color.Black);
+        //TODO: should we do something different?
+        //      because if a key with this value is inserted/deleted it would be an error.
+        rootDummy.key = Integer.MAX_VALUE;
+        rootDummy.parent = rootDummy;
+
+        nullNode = new RBNode(Color.Black);
+        nullNode.parent = rootDummy;
+        rootDummy.left = nullNode;
+        rootDummy.right = nullNode;
+
+        size = 0;
     }
 
     public RBTree(Iterable<Map.Entry<Integer, String>> items) {
@@ -84,29 +92,35 @@ public class RBTree {
      * otherwise, returns null
      */
     public String search(int k) {
-        RBNode position = getPositionByKey(k);
-        if ((dummyNode != position) && (position.key != k)) {
+        RBNode node = searchNode(k);
+        if (node == null) {
             return null;
         }
-        return position.item;
+        return node.item;
+
+    }
+
+    public RBNode searchNode(int k) {
+        RBNode node = getPositionByKey(k);
+        if (node.key != k) {
+            return null;
+        }
+        return node;
     }
 
     private RBNode getPositionByKey(int k) {
-        RBNode current = root;
-        if (root == null) {
-            return dummyNode;
-        }
+        RBNode current = rootDummy;
         while (true) {
             if (current.key == k) {
                 return current;
             }
             if (current.key < k) {
-                if (null == current.left) {
+                if (nullNode == current.left) {
                     return current;
                 }
                 current = current.left;
             } else { // current.key > k
-                if (null == current.right) {
+                if (nullNode == current.right) {
                     return current;
                 }
                 current = current.right;
@@ -173,11 +187,10 @@ public class RBTree {
      */
     public int insert(int k, String v) {
         if (empty()) {
-            root = new RBNode();
-            root.parent = dummyNode;
-            root.key = k;
-            root.item = v;
-            root.color = Color.Black;
+            rootDummy = new RBNode(Color.Black);
+            rootDummy.parent = rootDummy;
+            rootDummy.key = k;
+            rootDummy.item = v;
             size++;
             return 0;
         }
@@ -186,11 +199,10 @@ public class RBTree {
             return -1;
         }
         size++;
-        RBNode newNode = new RBNode();
+        RBNode newNode = new RBNode(Color.Red);
         newNode.key = k;
         newNode.item = v;
         newNode.parent = parent;
-        newNode.color = Color.Red;
         if (parent.key > newNode.key) {
             parent.right = newNode;
             if (parent == minNode) {
@@ -214,12 +226,12 @@ public class RBTree {
      * returns -1 if an item with key k was not found in the tree.
      */
     public int delete(int k) {
-        RBNode node = getPositionByKey(k);
-        if (node.key != k) {
-            // Node not found
+        RBNode node = searchNode(k);
+        if (node == null) {
             return -1;
         }
 
+        size -= 1;
         return deleteNode(node);
     }
 
@@ -263,7 +275,7 @@ public class RBTree {
 //        int color_switches = 0;
 //
 //        RBNode w;
-//        while (x != root && x.color == Color.Black) {
+//        while (x != rootDummy && x.color == Color.Black) {
 //            if (x == x.parent.left) {
 //                w = x.parent.right;
 //                if (w.color == Color.Red) {
@@ -290,7 +302,7 @@ public class RBTree {
 //                    w.right.color = Color.Black;
 //                    color_switches += 3;
 //                    x.parent.rotateLeft();
-//                    x = root;
+//                    x = rootDummy;
 //                }
 //            } else {
 //                // other direction
@@ -306,7 +318,7 @@ public class RBTree {
         int color_switches = 0;
 
         RBNode w;
-        while (x != root && x.color == Color.Black) {
+        while (x != rootDummy && x.color == Color.Black) {
             Direction direction = x == x.parent.left ? Direction.Left : Direction.Right;
             Direction opposite = oppositeDirection(direction);
 
@@ -335,7 +347,7 @@ public class RBTree {
                 w.getChild(opposite).color = Color.Black;
                 color_switches += 3;
                 x.parent.rotate(direction);
-                x = root;
+                x = rootDummy;
             }
         }
         x.color = Color.Black;
@@ -423,7 +435,7 @@ public class RBTree {
     public int[] keysToArray() {
         int[] keys = new int[size];
         if (!empty()) {
-            walk(root, new IndexedConsumer<>((node, index) -> keys[index] = node.key));
+            walk(rootDummy, new IndexedConsumer<>((node, index) -> keys[index] = node.key));
         }
         return keys;
     }
@@ -438,7 +450,7 @@ public class RBTree {
     public String[] valuesToArray() {
         String[] items = new String[size];
         if (!empty()) {
-            walk(root, new IndexedConsumer<>((node, index) -> items[index] = node.item));
+            walk(rootDummy, new IndexedConsumer<>((node, index) -> items[index] = node.item));
         }
         return items;
     }
@@ -463,7 +475,7 @@ public class RBTree {
         }
     }
 
-    private class RBNode {
+    private static class RBNode {
 
         public RBNode parent;
         public RBNode left;
@@ -471,6 +483,10 @@ public class RBTree {
         public Color color;
         public int key;
         public String item;
+
+        public RBNode(Color color) {
+            this.color = color;
+        }
 
         public RBNode getChild(Direction direction) {
             if (direction == Direction.Left) {
