@@ -43,6 +43,8 @@ public class RBTree {
 
         nullNode = new RBNode(Color.Black);
         nullNode.parent = rootDummy;
+        nullNode.left = nullNode;
+        nullNode.right = nullNode;
         rootDummy.left = nullNode;
         rootDummy.right = nullNode;
 
@@ -492,6 +494,57 @@ public class RBTree {
         return size;
     }
 
+    private void checkTreeInvariants() {
+        if (rootDummy.hasRightChild()) {
+            throw new AssertionError("rootDummy has a right child");
+        }
+        checkSubtreeInvariants(rootDummy);
+        //TODO: verify size, min, max?
+    }
+
+    // Returns the node black height
+    private int checkSubtreeInvariants(RBNode node) {
+        if (node == null) {
+            throw new AssertionError("Invalid node (null)");
+        }
+        if (node == nullNode) {
+            if (node.color != Color.Black) {
+                throw new AssertionError("Invalid color for nullNode");
+            }
+            return 1;
+
+        }
+
+        if (node.color == Color.Red && node.parent.color == Color.Red) {
+            throw new AssertionError("Red rule violated");
+        }
+
+        int black_length = 0;
+        if (node.color == Color.Black) {
+            black_length += 1;
+        }
+
+        int left_black_length = checkSubtreeInvariants(node.left);
+        int right_black_length = checkSubtreeInvariants(node.right);
+        if (left_black_length != right_black_length) {
+            throw new AssertionError("Black rule violated");
+        }
+        black_length += left_black_length;
+
+        if (node.hasLeftChild()) {
+            if (node.left.key >= node.key) {
+                throw new AssertionError("Left child key not lower than node key");
+            }
+        }
+        if (node.hasRightChild()) {
+            if (node.right.key <= node.key) {
+                throw new AssertionError("Right child key not higher then node key");
+            }
+        }
+
+        return black_length;
+    }
+
     private Direction oppositeDirection(Direction direction) {
         if (direction == Direction.Left) {
             return Direction.Right;
@@ -500,7 +553,7 @@ public class RBTree {
         }
     }
 
-    private static class RBNode {
+    private class RBNode {
 
         public RBNode parent;
         public RBNode left;
@@ -577,16 +630,24 @@ public class RBTree {
             oldLeft.setRight(this);
         }
 
-        public boolean isRightSon() {
+        public boolean isRightChild() {
             return parent.right == this;
         }
 
-        public boolean isLeftSon() {
+        public boolean isLeftChild() {
             return parent.left == this;
         }
 
         public Direction relationToParent() {
-            return isLeftSon() ? Direction.Left : Direction.Right;
+            return isLeftChild() ? Direction.Left : Direction.Right;
+        }
+
+        public boolean hasLeftChild() {
+            return left != nullNode;
+        }
+
+        public boolean hasRightChild() {
+            return right != nullNode;
         }
     }
 
