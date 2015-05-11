@@ -28,12 +28,14 @@ public class RBTree {
     private RBNode maxNode;
 
     //TODO: should these be fields of RBNode?
-    static RBNode dummyNode;
+    private RBNode dummyNode;
     static RBNode nullNode;
 
     // Default Constructor
     public RBTree() {
-
+        dummyNode = new RBNode();
+        dummyNode.color = Color.Black;
+        dummyNode.parent = dummyNode;
     }
 
     public RBTree(Iterable<Map.Entry<Integer, String>> items) {
