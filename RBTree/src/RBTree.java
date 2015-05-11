@@ -52,7 +52,7 @@ public class RBTree {
     }
 
     public TreeMap<Integer, String> toTreeMap() {
-        TreeMap<Integer, String> map = new TreeMap<Integer, String>();
+        TreeMap<Integer, String> map = new TreeMap<>();
         toMap(map);
         return map;
     }
@@ -127,8 +127,7 @@ public class RBTree {
      * or an empty array if the tree is empty.
      */
     public int[] keysToArray() {
-        int[] arr = new int[42]; // to be replaced by student code
-        return arr;              // to be replaced by student code
+        return new int[0];              // to be replaced by student code
     }
 
     /**
@@ -139,8 +138,7 @@ public class RBTree {
      * or an empty array if the tree is empty.
      */
     public String[] valuesToArray() {
-        String[] arr = new String[42]; // to be replaced by student code
-        return arr;                    // to be replaced by student code
+        return new String[0];                    // to be replaced by student code
     }
 
     /**
@@ -165,11 +163,13 @@ public class RBTree {
         public String item;
 
         public void setLeft(RBNode node) {
-            //TODO
+            left = node;
+            node.parent = this;
         }
 
         public void setRight(RBNode node) {
-            //TODO
+            right = node;
+            node.parent = this;
         }
 
         // Replace this node with another node and it's subtrees
