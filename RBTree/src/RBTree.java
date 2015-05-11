@@ -89,7 +89,6 @@ public class RBTree {
         return position.item;
     }
 
-<<<<<<< HEAD
     private RBNode getPositionByKey(int k) {
         RBNode current = root;
         if (root == null) {
@@ -111,11 +110,6 @@ public class RBTree {
                 current = current.right;
             }
         }
-=======
-    private RBNode getPositionByKey(int k)
-    {
-        return nullNode;
->>>>>>> origin/master
     }
 
     private int fixupTree(RBNode toFix) {
