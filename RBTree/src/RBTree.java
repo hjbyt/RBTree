@@ -236,7 +236,15 @@ public class RBTree {
             return -1;
         }
 
-        //TODO: fix min/max/both nodes
+        //TODO: make sure these don't affect runtime complexity of delete
+        if (size == 1) {
+            minNode = nil;
+            maxNode = nil;
+        } else if (node == minNode) {
+            minNode = successor(node);
+        } else if (node == maxNode) {
+            maxNode = predecessor(node);
+        }
 
         size -= 1;
         return deleteNode(node);
@@ -360,11 +368,12 @@ public class RBTree {
         x.color = Color.Black;
         color_switches += 1;
 
+
         return color_switches;
     }
 
-    //TODO: make sure not to call successor on maxNode
     private RBNode successor(RBNode node) {
+        assert node != maxNode;
         if (node.right != nil) {
             return subtreeMin(node.right);
         } else {
@@ -375,8 +384,8 @@ public class RBTree {
         }
     }
 
-    //TODO: make sure not to call predecessor on minNode
     private RBNode predecessor(RBNode node) {
+        assert node != minNode;
         if (node.left != nil) {
             return subtreeMax(node.left);
         } else {
