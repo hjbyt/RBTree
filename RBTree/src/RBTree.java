@@ -189,17 +189,17 @@ public class RBTree {
         }
 
         public void rotateLeft() {
-            @SuppressWarnings("SuspiciousNameCombination") RBNode y = right;
-            transplant(y);
-            setRight(y.left);
-            y.setLeft(this);
+            RBNode oldRight = right;
+            transplant(oldRight);
+            setRight(oldRight.left);
+            oldRight.setLeft(this);
         }
 
         public void rotateRight() {
-            @SuppressWarnings("SuspiciousNameCombination") RBNode y = left;
-            transplant(y);
-            setLeft(y.right);
-            y.setRight(this);
+            RBNode oldLeft = left;
+            transplant(oldLeft);
+            setLeft(oldLeft.right);
+            oldLeft.setRight(this);
         }
 
     }
