@@ -29,7 +29,7 @@ public class RBTree {
 
     //TODO: should these be fields of RBNode?
     static RBNode dummyNode;
-    static RBNode nullNode;
+    static RBNode nullNode = new RBNode(Color.Black);
 
     // Default Constructor
     public RBTree() {
@@ -456,7 +456,7 @@ public class RBTree {
         }
     }
 
-    private class RBNode {
+    private static class RBNode {
 
         public RBNode parent;
         public RBNode left;
@@ -464,6 +464,10 @@ public class RBTree {
         public Color color;
         public int key;
         public String item;
+
+        public RBNode(Color color) {
+            this.color = color;
+        }
 
         public RBNode getChild(Direction direction) {
             if (direction == Direction.Left) {
