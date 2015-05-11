@@ -38,6 +38,8 @@ public class RBTreeTest {
 
         rb0 = new RBTree(map0);
         rb1 = new RBTree(map1);
+        rb0.checkTreeInvariants();
+        rb1.checkTreeInvariants();
 
         maps = new ArrayList<>();
         maps.add(new MapPair(map0, rb0));
@@ -47,12 +49,6 @@ public class RBTreeTest {
     @After
     public void tearDown() throws Exception {
 
-    }
-
-    @Test
-    public void testConstuction() throws Exception {
-        rb0.checkTreeInvariants();
-        rb1.checkTreeInvariants();
     }
 
     @Test
