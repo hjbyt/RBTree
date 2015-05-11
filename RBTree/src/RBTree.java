@@ -137,7 +137,7 @@ public class RBTree {
         }
     }
 
-    private int fixupTree(RBNode toFix) {
+    private int insertFixup(RBNode toFix) {
         int colorSwitchCount = 0;
         while (toFix.color == Color.Red) {
             if (toFix.parent == toFix.parent.parent.left) {
@@ -219,7 +219,7 @@ public class RBTree {
         }
 
         size += 1;
-        return fixupTree(parent);
+        return insertFixup(parent);
     }
 
     /**
