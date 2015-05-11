@@ -463,9 +463,7 @@ public class RBTree {
      */
     public int[] keysToArray() {
         int[] keys = new int[size];
-        if (!empty()) {
-            walkInOrder(rootDummy, new IndexedConsumer<>((node, index) -> keys[index] = node.key));
-        }
+        walkInOrder(root(), new IndexedConsumer<>((node, index) -> keys[index] = node.key));
         return keys;
     }
 
@@ -478,9 +476,7 @@ public class RBTree {
      */
     public String[] valuesToArray() {
         String[] items = new String[size];
-        if (!empty()) {
-            walkInOrder(rootDummy, new IndexedConsumer<>((node, index) -> items[index] = node.item));
-        }
+        walkInOrder(root(), new IndexedConsumer<>((node, index) -> items[index] = node.item));
         return items;
     }
 
