@@ -33,7 +33,9 @@ public class RBTree {
 
     // Default Constructor
     public RBTree() {
-
+        dummyNode = new RBNode();
+        dummyNode.color = Color.Black;
+        dummyNode.parent = dummyNode;
     }
 
     public RBTree(Iterable<Map.Entry<Integer, String>> items) {
