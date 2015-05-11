@@ -174,12 +174,18 @@ public class RBTree {
 
         // Replace this node with another node and it's subtrees
         public void transplant(RBNode node) {
-            //TODO
+            if (this == parent.left) {
+                parent.setLeft(node);
+            } else {
+                parent.setRight(node);
+            }
         }
 
         // Replace this node with another node, keeping this node's subtrees.
         public void replace(RBNode node) {
-            //TODO
+            transplant(node);
+            node.setLeft(left);
+            node.setRight(right);
         }
 
         public void rotateLeft() {
