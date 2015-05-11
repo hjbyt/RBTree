@@ -15,6 +15,11 @@ public class RBTree {
         Red,
     }
 
+    private enum Direction {
+        Left,
+        Right,
+    }
+
     private RBNode root;
     private int size;
     private RBNode minNode;
@@ -77,12 +82,12 @@ public class RBTree {
     public String search(int k) {
         return "42";  // to be replaced by student code
     }
-    
+
     private RBNode getPositionByKey(int k)
     {
         return nullNode;
     }
-    
+
     private int fixupTree(RBNode toFix) {
     	int colorSwitchCount = 0;
     	while (toFix.color == Color.Red) {
@@ -164,7 +169,159 @@ public class RBTree {
      * returns -1 if an item with key k was not found in the tree.
      */
     public int delete(int k) {
-        return 42;    // to be replaced by student code
+        RBNode node = getPositionByKey(k);
+        if (node.key != k) {
+            // Node not found
+            return -1;
+        }
+
+        return deleteNode(node);
+    }
+
+    private int deleteNode(RBNode node) {
+        RBNode y = node;
+        Color y_original_color = y.color;
+
+        RBNode x;
+        if (node.left == nullNode) {
+            x = node.left;
+            node.transplant(x);
+        } else if (node.right == nullNode) {
+            x = node.left;
+            node.transplant(x);
+        } else {
+            // swap and delete predecessor;
+            y = subtreeMin(node.right);
+            y_original_color = y.color;
+            x = y.right;
+            if (y.parent == node) {
+                x.parent = y;
+            } else {
+                y.transplant(y.right);
+                y.right = node.right;
+                y.right.parent = y;
+            }
+            node.transplant(y);
+            y.left = node.left;
+            y.left.parent = y;
+            y.color = node.color;
+        }
+
+        if (y_original_color == Color.Black) {
+            return deleteFixup(x);
+        }
+
+        return 0;
+    }
+
+//    private int deleteFixup(RBNode x) {
+//        int color_switches = 0;
+//
+//        RBNode w;
+//        while (x != root && x.color == Color.Black) {
+//            if (x == x.parent.left) {
+//                w = x.parent.right;
+//                if (w.color == Color.Red) {
+//                    w.color = Color.Black;
+//                    x.parent.color = Color.Red;
+//                    color_switches += 2;
+//                    x.parent.rotateLeft();
+//                    w = x.parent.right;
+//                }
+//                if (w.left.color == Color.Black && w.right.color == Color.Black) {
+//                    w.color = Color.Red;
+//                    color_switches += 1;
+//                    x = x.parent;
+//                } else {
+//                    if (w.right.color == Color.Black) {
+//                        w.left.color = Color.Black;
+//                        w.color = Color.Red;
+//                        color_switches += 2;
+//                        w.rotateRight();
+//                        w = x.parent.right;
+//                    }
+//                    w.color = x.parent.color;
+//                    x.parent.color = Color.Black;
+//                    w.right.color = Color.Black;
+//                    color_switches += 3;
+//                    x.parent.rotateLeft();
+//                    x = root;
+//                }
+//            } else {
+//                // other direction
+//            }
+//        }
+//        x.color = Color.Black;
+//        color_switches += 1;
+//
+//        return color_switches;
+//    }
+
+    private int deleteFixup(RBNode x) {
+        int color_switches = 0;
+
+        RBNode w;
+        while (x != root && x.color == Color.Black) {
+            Direction direction = x == x.parent.left ? Direction.Left : Direction.Right;
+            Direction opposite = oppositeDirection(direction);
+
+            w = x.parent.getChild(opposite);
+            if (w.color == Color.Red) {
+                w.color = Color.Black;
+                x.parent.color = Color.Red;
+                color_switches += 2;
+                x.parent.rotate(direction);
+                w = x.parent.getChild(opposite);
+            }
+            if (w.getChild(direction).color == Color.Black && w.getChild(opposite).color == Color.Black) {
+                w.color = Color.Red;
+                color_switches += 1;
+                x = x.parent;
+            } else {
+                if (w.getChild(opposite).color == Color.Black) {
+                    w.getChild(direction).color = Color.Black;
+                    w.color = Color.Red;
+                    color_switches += 2;
+                    w.rotate(opposite);
+                    w = x.parent.getChild(opposite);
+                }
+                w.color = x.parent.color;
+                x.parent.color = Color.Black;
+                w.getChild(opposite).color = Color.Black;
+                color_switches += 3;
+                x.parent.rotate(direction);
+                x = root;
+            }
+        }
+        x.color = Color.Black;
+        color_switches += 1;
+
+        return color_switches;
+    }
+
+    //XXX
+    private RBNode successor(RBNode node) {
+        return null;
+    }
+
+    //XXX
+    private RBNode predecessor(RBNode node) {
+        return null;
+    }
+
+    private RBNode subtreeMin(RBNode node) {
+        while (node.left != nullNode) {
+            node = node.left;
+        }
+        return node;
+    }
+
+    //XXX
+    private RBNode subtreeMax(RBNode node) {
+        while (node.right != nullNode) {
+            node = node.right;
+        }
+        return node;
     }
 
     /**
@@ -220,6 +377,14 @@ public class RBTree {
         return size;
     }
 
+    private Direction oppositeDirection(Direction direction) {
+        if (direction == Direction.Left) {
+            return Direction.Right;
+        } else {
+            return Direction.Left;
+        }
+    }
+
     private class RBNode {
 
         public RBNode parent;
@@ -228,6 +393,30 @@ public class RBTree {
         public Color color;
         public int key;
         public String item;
+
+        public RBNode getChild(Direction direction) {
+            if (direction == Direction.Left) {
+                return left;
+            } else {
+                return right;
+            }
+        }
+
+        public void setChild(Direction direction, RBNode node) {
+            if (direction == Direction.Left) {
+                setLeft(node);
+            } else {
+                setRight(node);
+            }
+        }
+
+        public void rotate(Direction direction) {
+            if (direction == Direction.Left) {
+                rotateLeft();
+            } else {
+                rotateRight();
+            }
+        }
 
         public void setLeft(RBNode node) {
             left = node;
