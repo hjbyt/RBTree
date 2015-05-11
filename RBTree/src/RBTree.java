@@ -119,7 +119,9 @@ public class RBTree {
         while (toFix.color == Color.Red) {
             if (toFix.parent == toFix.parent.parent.left) {
                 RBNode uncle = toFix.parent.parent.right;
-                if (uncle.right.color == Color.Red) {
+                if (null == uncle) {
+                    toFix.rotateRight();
+                } else if (uncle.color == Color.Red) {
                     toFix.parent.color = Color.Black;
                     uncle.color = Color.Black;
                     toFix.parent.parent.color = Color.Red;
@@ -137,7 +139,9 @@ public class RBTree {
                 }
             } else {
                 RBNode uncle = toFix.parent.parent.left;
-                if (uncle.left.color == Color.Red) {
+                if (null == uncle) {
+                    toFix.rotateLeft();
+                } else if (uncle.left.color == Color.Red) {
                     toFix.parent.color = Color.Black;
                     uncle.color = Color.Black;
                     toFix.parent.parent.color = Color.Red;
@@ -155,6 +159,7 @@ public class RBTree {
                 }
             }
         }
+        root.color = Color.Black;
         return colorSwitchCount;
     }
 
