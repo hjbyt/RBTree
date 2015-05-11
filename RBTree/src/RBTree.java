@@ -119,15 +119,12 @@ public class RBTree {
             if (current.key == k) {
                 return current;
             }
+            if (current == nullNode) {
+                return nullNode.parent;
+            }
             if (current.key < k) {
-                if (nullNode == current.left) {
-                    return current;
-                }
                 current = current.left;
             } else { // current.key > k
-                if (nullNode == current.right) {
-                    return current;
-                }
                 current = current.right;
             }
         }
