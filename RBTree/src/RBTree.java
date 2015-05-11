@@ -1,5 +1,8 @@
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * RBTree
@@ -75,12 +78,32 @@ public class RBTree {
      * otherwise, returns null
      */
     public String search(int k) {
-        return "42";  // to be replaced by student code
+        RBNode position = getPositionByKey(k);
+        if (position.key != k) {
+        	return null;
+        }
+        return position.item;
     }
     
-    private RBNode getPositionByKey(int k)
-    {
-        return nullNode;
+    private RBNode getPositionByKey(int k) {
+        RBNode current = root;
+        while (true) {
+        	if (current.key == k) {
+        		return current;
+        	}
+        	if (current.key > k) {
+        		if (null == current.left) {
+        			return current;
+        		}
+        		current = current.left;
+        	}
+        	else { // current.key < k
+        		if (null == current.right) {
+        			return current;
+        		}
+        		current = current.right;
+        	}
+        }
     }
     
     private int fixupTree(RBNode toFix) {
@@ -141,6 +164,7 @@ public class RBTree {
         if (parent.key == k) {
         	return -1;
         }
+        size++;
         RBNode newNode = new RBNode();
         newNode.key = k;
         newNode.item = v;
@@ -187,6 +211,31 @@ public class RBTree {
         return maxNode.item;
     }
 
+    private class IndexedConsumer<T> implements Consumer<T> 
+    {
+    	int index;
+    	BiConsumer<T, Integer> base;
+    	public IndexedConsumer(BiConsumer<T, Integer> baseFunction) {
+    		index = 0;
+    		base = baseFunction;
+    	}
+		
+		public void accept(T arg) {
+			base.accept(arg, index);
+			index++;
+		}
+    }
+    
+    private void walk(RBNode node, Consumer<RBNode> consumer) {
+    	if (null != node.left) {
+    		walk(node.left, consumer);
+    	}
+    	walk(node, consumer);
+    	if (null != node.right) {
+    		walk(node.right, consumer);
+    	}
+    }
+    
     /**
      * public int[] keysToArray()
      * <p/>
@@ -194,7 +243,9 @@ public class RBTree {
      * or an empty array if the tree is empty.
      */
     public int[] keysToArray() {
-        return new int[0];              // to be replaced by student code
+    	int[] keys = new int[size];
+    	walk(root, new IndexedConsumer<RBNode>((node, index) -> keys[index++] = node.key));
+    	return keys;
     }
 
     /**
@@ -205,7 +256,9 @@ public class RBTree {
      * or an empty array if the tree is empty.
      */
     public String[] valuesToArray() {
-        return new String[0];                    // to be replaced by student code
+    	String[] items = new String[size];
+    	walk(root, new IndexedConsumer<RBNode>((node, index) -> items[index++] = node.item));
+    	return items;
     }
 
     /**
