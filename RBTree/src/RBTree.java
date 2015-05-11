@@ -29,7 +29,7 @@ public class RBTree {
     private int size;
     private RBNode minNode;
     private RBNode maxNode;
-    private RBNode nullNode;
+    private RBNode nil;
 
 
     // Default Constructor
@@ -41,12 +41,12 @@ public class RBTree {
         rootDummy.key = Integer.MAX_VALUE;
         rootDummy.parent = rootDummy;
 
-        nullNode = new RBNode(Color.Black);
-        nullNode.parent = rootDummy;
-        nullNode.left = nullNode;
-        nullNode.right = nullNode;
-        rootDummy.left = nullNode;
-        rootDummy.right = nullNode;
+        nil = new RBNode(Color.Black);
+        nil.parent = rootDummy;
+        nil.left = nil;
+        nil.right = nil;
+        rootDummy.left = nil;
+        rootDummy.right = nil;
 
         size = 0;
     }
@@ -119,8 +119,8 @@ public class RBTree {
             if (current.key == k) {
                 return current;
             }
-            if (current == nullNode) {
-                return nullNode.parent;
+            if (current == nil) {
+                return nil.parent;
             }
             if (current.key < k) {
                 current = current.left;
@@ -237,10 +237,10 @@ public class RBTree {
         Color y_original_color = y.color;
 
         RBNode x;
-        if (node.left == nullNode) {
+        if (node.left == nil) {
             x = node.left;
             node.transplant(x);
-        } else if (node.right == nullNode) {
+        } else if (node.right == nil) {
             x = node.left;
             node.transplant(x);
         } else {
@@ -355,7 +355,7 @@ public class RBTree {
 
     //XXX
     private RBNode successor(RBNode node) {
-        if (node.right != nullNode) {
+        if (node.right != nil) {
             return subtreeMin(node.right);
         } else {
             while (node.relationToParent() == Direction.Right) {
@@ -367,7 +367,7 @@ public class RBTree {
 
     //XXX
     private RBNode predecessor(RBNode node) {
-        if (node.left != nullNode) {
+        if (node.left != nil) {
             return subtreeMax(node.left);
         } else {
             while (node.relationToParent() == Direction.Left) {
@@ -378,7 +378,7 @@ public class RBTree {
     }
 
     private RBNode subtreeMin(RBNode node) {
-        while (node.left != nullNode) {
+        while (node.left != nil) {
             node = node.left;
         }
         return node;
@@ -386,7 +386,7 @@ public class RBTree {
 
     //XXX
     private RBNode subtreeMax(RBNode node) {
-        while (node.right != nullNode) {
+        while (node.right != nil) {
             node = node.right;
         }
         return node;
@@ -444,7 +444,7 @@ public class RBTree {
     }
 
     private void walk(RBNode node, Consumer<RBNode> consumerPre, Consumer<RBNode> consumerIn, Consumer<RBNode> consumerPost) {
-        if (node == nullNode) {
+        if (node == nil) {
             return;
         }
         consumerPre.accept(node);
@@ -505,9 +505,9 @@ public class RBTree {
         if (node == null) {
             throw new AssertionError("Invalid node (null)");
         }
-        if (node == nullNode) {
+        if (node == nil) {
             if (node.color != Color.Black) {
-                throw new AssertionError("Invalid color for nullNode");
+                throw new AssertionError("Invalid color for nil");
             }
             return 1;
 
@@ -641,11 +641,11 @@ public class RBTree {
         }
 
         public boolean hasLeftChild() {
-            return left != nullNode;
+            return left != nil;
         }
 
         public boolean hasRightChild() {
-            return right != nullNode;
+            return right != nil;
         }
     }
 
