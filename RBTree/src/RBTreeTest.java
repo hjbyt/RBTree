@@ -6,6 +6,8 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 
+//TODO: make a test that randomly inserts and deletes nodes, and checks invariants.
+
 public class RBTreeTest {
 
     TreeMap<Integer, String> map0;
@@ -86,6 +88,7 @@ public class RBTreeTest {
                 pair.rb.checkTreeInvariants();
                 assertEquals(pair.map, pair.rb.toTreeMap());
             }
+            //TODO: remove the rest also
         }
     }
 

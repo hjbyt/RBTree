@@ -3,6 +3,11 @@ import java.util.TreeMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+//TODO: decide which methods should be in RBNode and which shouldn't.
+// e.g. should hasLeftChild say in RBNode (it references nil, which is outside of it)
+// and should successor/predecessor be in RBNode?
+// or maybe should RBNode be agnostic to the order of node, which is imposed by the tree...
+
 /**
  * RBTree
  * <p>
@@ -47,6 +52,8 @@ public class RBTree {
         nil.right = nil;
         rootDummy.left = nil;
         rootDummy.right = nil;
+        minNode = nil;
+        maxNode = nil;
 
         size = 0;
     }
@@ -183,34 +190,35 @@ public class RBTree {
      * returns -1 if an item with key k already exists in the tree.
      */
     public int insert(int k, String v) {
-        if (empty()) {
-            rootDummy = new RBNode(Color.Black);
-            rootDummy.parent = rootDummy;
-            rootDummy.key = k;
-            rootDummy.item = v;
-            size++;
-            return 0;
-        }
         RBNode parent = getPositionByKey(k);
         if (parent.key == k) {
             return -1;
         }
-        size++;
+
         RBNode newNode = new RBNode(Color.Red);
         newNode.key = k;
         newNode.item = v;
         newNode.parent = parent;
-        if (parent.key > newNode.key) {
-            parent.right = newNode;
+
+        if (empty()) {
+            minNode = newNode;
+            maxNode = newNode;
+        }
+
+        if (newNode.key < parent.key) {
+            parent.left = newNode;
             if (parent == minNode) {
                 minNode = newNode;
             }
-        } else { // parent.key < newNode.key
-            parent.left = newNode;
+        } else {
+            assert newNode.key > parent.key;
+            parent.right = newNode;
             if (parent == maxNode) {
                 maxNode = newNode;
             }
         }
+
+        size += 1;
         return fixupTree(parent);
     }
 
@@ -227,6 +235,8 @@ public class RBTree {
         if (node == null) {
             return -1;
         }
+
+        //TODO: fix min/max/both nodes
 
         size -= 1;
         return deleteNode(node);
@@ -353,7 +363,7 @@ public class RBTree {
         return color_switches;
     }
 
-    //XXX
+    //TODO: make sure not to call successor on maxNode
     private RBNode successor(RBNode node) {
         if (node.right != nil) {
             return subtreeMin(node.right);
@@ -365,7 +375,7 @@ public class RBTree {
         }
     }
 
-    //XXX
+    //TODO: make sure not to call predecessor on minNode
     private RBNode predecessor(RBNode node) {
         if (node.left != nil) {
             return subtreeMax(node.left);
@@ -384,7 +394,6 @@ public class RBTree {
         return node;
     }
 
-    //XXX
     private RBNode subtreeMax(RBNode node) {
         while (node.right != nil) {
             node = node.right;
@@ -403,6 +412,7 @@ public class RBTree {
      * or null if the tree is empty
      */
     public String min() {
+        // Note: if node is nil, then node.item should be null
         return minNode.item;
     }
 
@@ -413,6 +423,7 @@ public class RBTree {
      * or null if the tree is empty
      */
     public String max() {
+        // Note: if node is nil, then node.item should be null
         return maxNode.item;
     }
 
@@ -496,8 +507,29 @@ public class RBTree {
         if (rootDummy.hasRightChild()) {
             throw new AssertionError("rootDummy has a right child");
         }
+        if (rootDummy.color != Color.Black) {
+            throw new AssertionError("Invalid color for rootDummy");
+        }
+        if (rootDummy.parent != rootDummy) {
+            throw new AssertionError("Invalid parent for rootDummy");
+        }
+        if (nil.color != Color.Black) {
+            throw new AssertionError("Invalid color for nil");
+        }
+        if (nil.right != nil || nil.left != nil) {
+            throw new AssertionError("Invalid child for nil");
+        }
+        if (nil.key != 0 || nil.item != null || rootDummy.key != Integer.MAX_VALUE || rootDummy.item != null) {
+            throw new AssertionError("Invalid key/item for nil/rootDummy");
+        }
         checkSubtreeInvariants(rootDummy);
-        //TODO: verify size, min, max?
+        TreeMap<Integer, String> map = toTreeMap();
+        if (map.size() != size()) {
+            throw new AssertionError("Incorrect size");
+        }
+        if (subtreeMin(root()) != minNode || subtreeMax(root()) != maxNode) {
+            throw new AssertionError("Incorrect min/max node");
+        }
     }
 
     // Returns the node black height
@@ -506,11 +538,7 @@ public class RBTree {
             throw new AssertionError("Invalid node (null)");
         }
         if (node == nil) {
-            if (node.color != Color.Black) {
-                throw new AssertionError("Invalid color for nil");
-            }
             return 1;
-
         }
 
         if (node.color == Color.Red && node.parent.color == Color.Red) {
