@@ -79,10 +79,9 @@ public class RBTree {
     }
     
     private RBNode getPositionByKey(int k);
-    private void rotateLeft(RBNode node);
-    private void rotateRight(RBNode node);
     
-    private void fixupTree(RBNode toFix) {
+    private int fixupTree(RBNode toFix) {
+    	int colorSwitchCount = 0;
     	while (toFix.color == Color.Red) {
     		if (toFix.parent == toFix.parent.parent.left) {
     			RBNode uncle = toFix.parent.parent.right;
@@ -90,15 +89,17 @@ public class RBTree {
     				toFix.parent.color = Color.Black;
     				uncle.color = Color.Black;
     				toFix.parent.parent.color = Color.Red;
+    				colorSwitchCount += 3;
     				toFix = toFix.parent.parent;
     			} else {
     				if (toFix == toFix.parent.right) {
     					toFix = toFix.parent;
-    					rotateLeft(toFix);
+    					toFix.rotateLeft();;
     				}
     				toFix.parent.color = Color.Black;
     				toFix.parent.parent.color = Color.Red;
-    				rotateRight(toFix.parent.parent);
+    				colorSwitchCount += 2;
+    				toFix.parent.parent.rotateRight();
     			}
     		}
     		else {
@@ -106,19 +107,22 @@ public class RBTree {
     			if (uncle.left.color == Color.Red) {
     				toFix.parent.color = Color.Black;
     				uncle.color = Color.Black;
-    				toFix = parent.parent.color = Color.Red;
+    				toFix.parent.parent.color = Color.Red;
+    				colorSwitchCount += 3;
     				toFix = toFix.parent.parent;
     			} else {
     				if (toFix == toFix.parent.left) {
     					toFix = toFix.parent;
-    					rotateRight(toFix);
+    					toFix.rotateRight(_;
     				}
     				toFix.parent.color = Color.Black;
     				toFix.parent.parent.color = Color.Red;
-    				rotateLeft(toFix.parent.parent);
+    				colorSwitchCount += 2;
+    				toFix.parent.parent.rotateLeft();
     			}
     		}
     	}
+    	return colorSwitchCount;
     }
 
     /**
@@ -131,7 +135,9 @@ public class RBTree {
      */
     public int insert(int k, String v) {
         RBNode parent = getPositionByKey(k);
-        assert(k != parent.key);
+        if (parent.key == k) {
+        	return -1;
+        }
         RBNode newNode = new RBNode();
         newNode.key = k;
         newNode.item = v;
@@ -143,7 +149,7 @@ public class RBTree {
         else { // parent.key < newNode.key
         	parent.left = newNode;
         }
-        fixupTree(parent);
+        return fixupTree(parent);
     }
 
     /**
