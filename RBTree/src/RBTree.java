@@ -17,6 +17,8 @@ public class RBTree {
 
     private RBNode root;
     private int size;
+    private RBNode minNode;
+    private RBNode maxNode;
 
     //TODO: should these be fields of RBNode?
     static RBNode dummyNode;
@@ -75,6 +77,49 @@ public class RBTree {
     public String search(int k) {
         return "42";  // to be replaced by student code
     }
+    
+    private RBNode getPositionByKey(int k);
+    private void rotateLeft(RBNode node);
+    private void rotateRight(RBNode node);
+    
+    private void fixupTree(RBNode toFix) {
+    	while (toFix.color == Color.Red) {
+    		if (toFix.parent == toFix.parent.parent.left) {
+    			RBNode uncle = toFix.parent.parent.right;
+    			if (uncle.right.color == Color.Red) {
+    				toFix.parent.color = Color.Black;
+    				uncle.color = Color.Black;
+    				toFix.parent.parent.color = Color.Red;
+    				toFix = toFix.parent.parent;
+    			} else {
+    				if (toFix == toFix.parent.right) {
+    					toFix = toFix.parent;
+    					rotateLeft(toFix);
+    				}
+    				toFix.parent.color = Color.Black;
+    				toFix.parent.parent.color = Color.Red;
+    				rotateRight(toFix.parent.parent);
+    			}
+    		}
+    		else {
+    			RBNode uncle = toFix.parent.parent.left;
+    			if (uncle.left.color == Color.Red) {
+    				toFix.parent.color = Color.Black;
+    				uncle.color = Color.Black;
+    				toFix = parent.parent.color = Color.Red;
+    				toFix = toFix.parent.parent;
+    			} else {
+    				if (toFix == toFix.parent.left) {
+    					toFix = toFix.parent;
+    					rotateRight(toFix);
+    				}
+    				toFix.parent.color = Color.Black;
+    				toFix.parent.parent.color = Color.Red;
+    				rotateLeft(toFix.parent.parent);
+    			}
+    		}
+    	}
+    }
 
     /**
      * public int insert(int k, String v)
@@ -85,7 +130,20 @@ public class RBTree {
      * returns -1 if an item with key k already exists in the tree.
      */
     public int insert(int k, String v) {
-        return 42;    // to be replaced by student code
+        RBNode parent = getPositionByKey(k);
+        assert(k != parent.key);
+        RBNode newNode = new RBNode();
+        newNode.key = k;
+        newNode.item = v;
+        newNode.parent = parent;
+        newNode.color = Color.Red;
+        if (parent.key > newNode.key) {
+        	parent.right = newNode;
+        }
+        else { // parent.key < newNode.key
+        	parent.left = newNode;
+        }
+        fixupTree(parent);
     }
 
     /**
@@ -107,7 +165,7 @@ public class RBTree {
      * or null if the tree is empty
      */
     public String min() {
-        return "42"; // to be replaced by student code
+        return minNode.item;
     }
 
     /**
@@ -117,7 +175,7 @@ public class RBTree {
      * or null if the tree is empty
      */
     public String max() {
-        return "42"; // to be replaced by student code
+        return maxNode.item;
     }
 
     /**
