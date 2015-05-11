@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 
 /**
  * RBTree
- * <p/>
+ * <p>
  * An implementation of a Red Black Tree with
  * non-negative, distinct integer keys and values
  */
@@ -63,7 +63,7 @@ public class RBTree {
 
     /**
      * public boolean empty()
-     * <p/>
+     * <p>
      * returns true if and only if the tree is empty
      */
     public boolean empty() {
@@ -72,96 +72,106 @@ public class RBTree {
 
     /**
      * public String search(int k)
-     * <p/>
+     * <p>
      * returns the value of an item with key k if it exists in the tree
      * otherwise, returns null
      */
     public String search(int k) {
         RBNode position = getPositionByKey(k);
-        if (position.key != k) {
-        	return null;
+        if ((dummyNode != position) && (position.key != k)) {
+            return null;
         }
         return position.item;
     }
-    
+
     private RBNode getPositionByKey(int k) {
         RBNode current = root;
+        if (root == null) {
+            return dummyNode;
+        }
         while (true) {
-        	if (current.key == k) {
-        		return current;
-        	}
-        	if (current.key > k) {
-        		if (null == current.left) {
-        			return current;
-        		}
-        		current = current.left;
-        	}
-        	else { // current.key < k
-        		if (null == current.right) {
-        			return current;
-        		}
-        		current = current.right;
-        	}
+            if (current.key == k) {
+                return current;
+            }
+            if (current.key < k) {
+                if (null == current.left) {
+                    return current;
+                }
+                current = current.left;
+            } else { // current.key > k
+                if (null == current.right) {
+                    return current;
+                }
+                current = current.right;
+            }
         }
     }
-    
+
     private int fixupTree(RBNode toFix) {
-    	int colorSwitchCount = 0;
-    	while (toFix.color == Color.Red) {
-    		if (toFix.parent == toFix.parent.parent.left) {
-    			RBNode uncle = toFix.parent.parent.right;
-    			if (uncle.right.color == Color.Red) {
-    				toFix.parent.color = Color.Black;
-    				uncle.color = Color.Black;
-    				toFix.parent.parent.color = Color.Red;
-    				colorSwitchCount += 3;
-    				toFix = toFix.parent.parent;
-    			} else {
-    				if (toFix == toFix.parent.right) {
-    					toFix = toFix.parent;
-    					toFix.rotateLeft();
-    				}
-    				toFix.parent.color = Color.Black;
-    				toFix.parent.parent.color = Color.Red;
-    				colorSwitchCount += 2;
-    				toFix.parent.parent.rotateRight();
-    			}
-    		}
-    		else {
-    			RBNode uncle = toFix.parent.parent.left;
-    			if (uncle.left.color == Color.Red) {
-    				toFix.parent.color = Color.Black;
-    				uncle.color = Color.Black;
-    				toFix.parent.parent.color = Color.Red;
-    				colorSwitchCount += 3;
-    				toFix = toFix.parent.parent;
-    			} else {
-    				if (toFix == toFix.parent.left) {
-    					toFix = toFix.parent;
-    					toFix.rotateRight();
-    				}
-    				toFix.parent.color = Color.Black;
-    				toFix.parent.parent.color = Color.Red;
-    				colorSwitchCount += 2;
-    				toFix.parent.parent.rotateLeft();
-    			}
-    		}
-    	}
-    	return colorSwitchCount;
+        int colorSwitchCount = 0;
+        while (toFix.color == Color.Red) {
+            if (toFix.parent == toFix.parent.parent.left) {
+                RBNode uncle = toFix.parent.parent.right;
+                if (uncle.right.color == Color.Red) {
+                    toFix.parent.color = Color.Black;
+                    uncle.color = Color.Black;
+                    toFix.parent.parent.color = Color.Red;
+                    colorSwitchCount += 3;
+                    toFix = toFix.parent.parent;
+                } else {
+                    if (toFix == toFix.parent.right) {
+                        toFix = toFix.parent;
+                        toFix.rotateLeft();
+                    }
+                    toFix.parent.color = Color.Black;
+                    toFix.parent.parent.color = Color.Red;
+                    colorSwitchCount += 2;
+                    toFix.parent.parent.rotateRight();
+                }
+            } else {
+                RBNode uncle = toFix.parent.parent.left;
+                if (uncle.left.color == Color.Red) {
+                    toFix.parent.color = Color.Black;
+                    uncle.color = Color.Black;
+                    toFix.parent.parent.color = Color.Red;
+                    colorSwitchCount += 3;
+                    toFix = toFix.parent.parent;
+                } else {
+                    if (toFix == toFix.parent.left) {
+                        toFix = toFix.parent;
+                        toFix.rotateRight();
+                    }
+                    toFix.parent.color = Color.Black;
+                    toFix.parent.parent.color = Color.Red;
+                    colorSwitchCount += 2;
+                    toFix.parent.parent.rotateLeft();
+                }
+            }
+        }
+        return colorSwitchCount;
     }
 
     /**
      * public int insert(int k, String v)
-     * <p/>
+     * <p>
      * inserts an item with key k and value v to the red black tree.
      * the tree must remain valid (keep its invariants).
      * returns the number of color switches, or 0 if no color switches were necessary.
      * returns -1 if an item with key k already exists in the tree.
      */
     public int insert(int k, String v) {
+        if (empty()) {
+            root = new RBNode();
+            root.parent = dummyNode;
+            root.key = k;
+            root.item = v;
+            root.color = Color.Black;
+            size++;
+            return 0;
+        }
         RBNode parent = getPositionByKey(k);
         if (parent.key == k) {
-        	return -1;
+            return -1;
         }
         size++;
         RBNode newNode = new RBNode();
@@ -170,17 +180,22 @@ public class RBTree {
         newNode.parent = parent;
         newNode.color = Color.Red;
         if (parent.key > newNode.key) {
-        	parent.right = newNode;
-        }
-        else { // parent.key < newNode.key
-        	parent.left = newNode;
+            parent.right = newNode;
+            if (parent == minNode) {
+                minNode = newNode;
+            }
+        } else { // parent.key < newNode.key
+            parent.left = newNode;
+            if (parent == maxNode) {
+                maxNode = newNode;
+            }
         }
         return fixupTree(parent);
     }
 
     /**
      * public int delete(int k)
-     * <p/>
+     * <p>
      * deletes an item with key k from the binary tree, if it is there;
      * the tree must remain valid (keep its invariants).
      * returns the number of color switches, or 0 if no color switches were needed.
@@ -192,7 +207,7 @@ public class RBTree {
 
     /**
      * public String min()
-     * <p/>
+     * <p>
      * Returns the value of the item with the smallest key in the tree,
      * or null if the tree is empty
      */
@@ -202,7 +217,7 @@ public class RBTree {
 
     /**
      * public String max()
-     * <p/>
+     * <p>
      * Returns the value of the item with the largest key in the tree,
      * or null if the tree is empty
      */
@@ -210,61 +225,65 @@ public class RBTree {
         return maxNode.item;
     }
 
-    private class IndexedConsumer<T> implements Consumer<T> 
-    {
-    	int index;
-    	BiConsumer<T, Integer> base;
-    	public IndexedConsumer(BiConsumer<T, Integer> baseFunction) {
-    		index = 0;
-    		base = baseFunction;
-    	}
-		
-		public void accept(T arg) {
-			base.accept(arg, index);
-			index++;
-		}
+    private class IndexedConsumer<T> implements Consumer<T> {
+        int index;
+        BiConsumer<T, Integer> base;
+
+        public IndexedConsumer(BiConsumer<T, Integer> baseFunction) {
+            index = 0;
+            base = baseFunction;
+        }
+
+        public void accept(T arg) {
+            base.accept(arg, index);
+            index++;
+        }
     }
-    
+
     private void walk(RBNode node, Consumer<RBNode> consumer) {
-    	if (null != node.left) {
-    		walk(node.left, consumer);
-    	}
-    	walk(node, consumer);
-    	if (null != node.right) {
-    		walk(node.right, consumer);
-    	}
+        if (null != node.left) {
+            walk(node.left, consumer);
+        }
+        consumer.accept(node);
+        if (null != node.right) {
+            walk(node.right, consumer);
+        }
     }
-    
+
     /**
      * public int[] keysToArray()
-     * <p/>
+     * <p>
      * Returns a sorted array which contains all keys in the tree,
      * or an empty array if the tree is empty.
      */
     public int[] keysToArray() {
-    	int[] keys = new int[size];
-    	walk(root, new IndexedConsumer<RBNode>((node, index) -> keys[index] = node.key));
-    	return keys;
+        int[] keys = new int[size];
+        if (!empty()) {
+            walk(root, new IndexedConsumer<>((node, index) -> keys[index] = node.key));
+        }
+        return keys;
     }
 
     /**
      * public String[] valuesToArray()
-     * <p/>
+     * <p>
      * Returns an array which contains all values in the tree,
      * sorted by their respective keys,
      * or an empty array if the tree is empty.
      */
     public String[] valuesToArray() {
-    	String[] items = new String[size];
-    	walk(root, new IndexedConsumer<RBNode>((node, index) -> items[index] = node.item));
-    	return items;
+        String[] items = new String[size];
+        if (!empty()) {
+            walk(root, new IndexedConsumer<>((node, index) -> items[index] = node.item));
+        }
+        return items;
     }
 
     /**
      * public int size()
-     * <p/>
+     * <p>
      * Returns the number of nodes in the tree.
-     * <p/>
+     * <p>
      * precondition: none
      * postcondition: none
      */

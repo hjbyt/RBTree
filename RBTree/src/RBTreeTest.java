@@ -17,7 +17,8 @@ public class RBTreeTest {
     class MapPair {
         public Map<Integer, String> map;
         public RBTree rb;
-        public MapPair(Map<Integer, String> map,RBTree rb) {
+
+        public MapPair(Map<Integer, String> map, RBTree rb) {
             this.map = map;
             this.rb = rb;
         }
@@ -27,18 +28,18 @@ public class RBTreeTest {
 
     @Before
     public void setUp() throws Exception {
-        map0 = new TreeMap<Integer, String>();
-        map1 = new TreeMap<Integer, String>();
+        map0 = new TreeMap<>();
+        map1 = new TreeMap<>();
 
         for (char c = 'a'; c <= 'g'; c++) {
             String s = ("" + c) + c + c;
-            map1.put((int)c, s);
+            map1.put((int) c, s);
         }
 
         rb0 = new RBTree(map0);
         rb1 = new RBTree(map1);
 
-        maps = new ArrayList<MapPair>();
+        maps = new ArrayList<>();
         maps.add(new MapPair(map0, rb0));
         maps.add(new MapPair(map1, rb1));
     }
@@ -57,8 +58,8 @@ public class RBTreeTest {
 
     @Test
     public void testSearch() throws Exception {
-        assertEquals(map1.get((int)'c'), rb1.search((int)'c'));
-        assertEquals(map1.get((int)'z'), rb1.search((int)'z'));
+        assertEquals(map1.get((int) 'c'), rb1.search((int) 'c'));
+        assertEquals(map1.get((int) 'z'), rb1.search((int) 'z'));
     }
 
     @Test
@@ -101,7 +102,7 @@ public class RBTreeTest {
     @Test
     public void testKeysToArray() throws Exception {
         for (MapPair pair : maps) {
-            List<Integer> mapKeys = new ArrayList<Integer>(pair.map.keySet());
+            List<Integer> mapKeys = new ArrayList<>(pair.map.keySet());
             int[] mapKeysArray = new int[mapKeys.size()];
             for (int i = 0; i < mapKeys.size(); i++) {
                 mapKeysArray[i] = mapKeys.get(i);
@@ -115,7 +116,7 @@ public class RBTreeTest {
     @Test
     public void testValuesToArray() throws Exception {
         for (MapPair pair : maps) {
-            List<String> mapValues = new ArrayList<String>(pair.map.values());
+            List<String> mapValues = new ArrayList<>(pair.map.values());
             String[] mapValuesArray = new String[mapValues.size()];
             for (int i = 0; i < mapValues.size(); i++) {
                 mapValuesArray[i] = mapValues.get(i);
