@@ -356,12 +356,26 @@ public class RBTree {
 
     //XXX
     private RBNode successor(RBNode node) {
-        return null;
+        if (node.right != nullNode) {
+            return subtreeMin(node.right);
+        } else {
+            while (node.relationToParent() == Direction.Right) {
+                node = node.parent;
+            }
+            return node;
+        }
     }
 
     //XXX
     private RBNode predecessor(RBNode node) {
-        return null;
+        if (node.left != nullNode) {
+            return subtreeMax(node.left);
+        } else {
+            while (node.relationToParent() == Direction.Left) {
+                node = node.parent;
+            }
+            return node;
+        }
     }
 
     private RBNode subtreeMin(RBNode node) {
@@ -564,6 +578,17 @@ public class RBTree {
             oldLeft.setRight(this);
         }
 
+        public boolean isRightSon() {
+            return parent.right == this;
+        }
+
+        public boolean isLeftSon() {
+            return parent.left == this;
+        }
+
+        public Direction relationToParent() {
+            return isLeftSon() ? Direction.Left : Direction.Right;
+        }
     }
 
 }
