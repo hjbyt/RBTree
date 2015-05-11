@@ -70,7 +70,7 @@ public class RBTree {
     }
 
     public void toMap(Map<Integer, String> map) {
-        walkPreOrder(rootDummy.left, (node) -> map.put(node.key, node.item));
+        walkPreOrder(root(), (node) -> map.put(node.key, node.item));
     }
 
     public TreeMap<Integer, String> toTreeMap() {
@@ -393,6 +393,10 @@ public class RBTree {
         return node;
     }
 
+    private RBNode root() {
+        return rootDummy.left;
+    }
+
     /**
      * public String min()
      * <p>
@@ -441,14 +445,13 @@ public class RBTree {
     }
 
     private void walk(RBNode node, Consumer<RBNode> consumerPre, Consumer<RBNode> consumerIn, Consumer<RBNode> consumerPost) {
+        if (node == nullNode) {
+            return;
+        }
         consumerPre.accept(node);
-        if (nullNode != node.left) {
-            walk(node.left, consumerPre, consumerIn, consumerPost);
-        }
+        walk(node.left, consumerPre, consumerIn, consumerPost);
         consumerIn.accept(node);
-        if (nullNode != node.right) {
-            walk(node.right, consumerPre, consumerIn, consumerPost);
-        }
+        walk(node.right, consumerPre, consumerIn, consumerPost);
         consumerPost.accept(node);
     }
 
