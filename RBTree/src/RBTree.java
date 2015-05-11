@@ -516,9 +516,10 @@ public class RBTree {
         if (rootDummy.hasRightChild()) {
             throw new AssertionError("rootDummy has a right child");
         }
-        if (rootDummy.color != Color.Black) {
-            throw new AssertionError("Invalid color for rootDummy");
-        }
+        //TODO XXX: im not sure if the rootDummy should always stay black or not
+//        if (rootDummy.color != Color.Black) {
+//            throw new AssertionError("Invalid color for rootDummy");
+//        }
         if (rootDummy.parent != rootDummy) {
             throw new AssertionError("Invalid parent for rootDummy");
         }
