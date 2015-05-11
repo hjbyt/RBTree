@@ -50,6 +50,12 @@ public class RBTreeTest {
     }
 
     @Test
+    public void testConstuction() throws Exception {
+        rb0.checkTreeInvariants();
+        rb1.checkTreeInvariants();
+    }
+
+    @Test
     public void testEmpty() throws Exception {
         for (MapPair pair : maps) {
             assertEquals(pair.map.isEmpty(), pair.rb.empty());
@@ -69,6 +75,7 @@ public class RBTreeTest {
                 String s = ("" + c) + c + c;
                 pair.map.put((int) c, s);
                 pair.rb.insert((int) c, s);
+                pair.rb.checkTreeInvariants();
                 assertEquals(pair.map, pair.rb.toTreeMap());
             }
         }
@@ -80,6 +87,7 @@ public class RBTreeTest {
             for (char c = 'b'; c <= 'd'; c++) {
                 pair.map.remove((int) c);
                 pair.rb.delete((int) c);
+                pair.rb.checkTreeInvariants();
                 assertEquals(pair.map, pair.rb.toTreeMap());
             }
         }

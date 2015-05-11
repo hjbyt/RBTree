@@ -494,7 +494,8 @@ public class RBTree {
         return size;
     }
 
-    private void checkTreeInvariants() {
+    // non-private for testing purposes
+    void checkTreeInvariants() {
         if (rootDummy.hasRightChild()) {
             throw new AssertionError("rootDummy has a right child");
         }
