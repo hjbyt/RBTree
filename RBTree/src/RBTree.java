@@ -525,13 +525,6 @@ public class RBTree {
             black_length += 1;
         }
 
-        int left_black_length = checkSubtreeInvariants(node.left);
-        int right_black_length = checkSubtreeInvariants(node.right);
-        if (left_black_length != right_black_length) {
-            throw new AssertionError("Black rule violated");
-        }
-        black_length += left_black_length;
-
         if (node.hasLeftChild()) {
             if (node.left.key >= node.key) {
                 throw new AssertionError("Left child key not lower than node key");
@@ -542,6 +535,13 @@ public class RBTree {
                 throw new AssertionError("Right child key not higher then node key");
             }
         }
+
+        int left_black_length = checkSubtreeInvariants(node.left);
+        int right_black_length = checkSubtreeInvariants(node.right);
+        if (left_black_length != right_black_length) {
+            throw new AssertionError("Black rule violated");
+        }
+        black_length += left_black_length;
 
         return black_length;
     }
