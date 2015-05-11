@@ -12,6 +12,9 @@ import java.util.function.Consumer;
 
 public class RBTree {
 
+    static Consumer<RBNode> dummyConsumer = (a) -> {
+    };
+
     private enum Color {
         Black,
         Red,
@@ -67,7 +70,7 @@ public class RBTree {
     }
 
     public void toMap(Map<Integer, String> map) {
-        //TODO
+        walkPreOrder(rootDummy.left, (node) -> map.put(node.key, node.item));
     }
 
     public TreeMap<Integer, String> toTreeMap() {
@@ -411,14 +414,28 @@ public class RBTree {
         }
     }
 
-    private void walk(RBNode node, Consumer<RBNode> consumer) {
-        if (null != node.left) {
-            walk(node.left, consumer);
+    private void walkPreOrder(RBNode node, Consumer<RBNode> consumer) {
+        walk(node, consumer, dummyConsumer, dummyConsumer);
+    }
+
+    private void walkInOrder(RBNode node, Consumer<RBNode> consumer) {
+        walk(node, dummyConsumer, consumer, dummyConsumer);
+    }
+
+    private void walkPostOrder(RBNode node, Consumer<RBNode> consumer) {
+        walk(node, dummyConsumer, dummyConsumer, consumer);
+    }
+
+    private void walk(RBNode node, Consumer<RBNode> consumerPre, Consumer<RBNode> consumerIn, Consumer<RBNode> consumerPost) {
+        consumerPre.accept(node);
+        if (nullNode != node.left) {
+            walk(node.left, consumerPre, consumerIn, consumerPost);
         }
-        consumer.accept(node);
-        if (null != node.right) {
-            walk(node.right, consumer);
+        consumerIn.accept(node);
+        if (nullNode != node.right) {
+            walk(node.right, consumerPre, consumerIn, consumerPost);
         }
+        consumerPost.accept(node);
     }
 
     /**
@@ -430,7 +447,7 @@ public class RBTree {
     public int[] keysToArray() {
         int[] keys = new int[size];
         if (!empty()) {
-            walk(rootDummy, new IndexedConsumer<>((node, index) -> keys[index] = node.key));
+            walkInOrder(rootDummy, new IndexedConsumer<>((node, index) -> keys[index] = node.key));
         }
         return keys;
     }
@@ -445,7 +462,7 @@ public class RBTree {
     public String[] valuesToArray() {
         String[] items = new String[size];
         if (!empty()) {
-            walk(rootDummy, new IndexedConsumer<>((node, index) -> items[index] = node.item));
+            walkInOrder(rootDummy, new IndexedConsumer<>((node, index) -> items[index] = node.item));
         }
         return items;
     }
