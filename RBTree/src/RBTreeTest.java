@@ -29,7 +29,7 @@ public class RBTreeTest {
     List<MapPair> maps;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() throws Throwable {
         map0 = new TreeMap<>();
         map1 = new TreeMap<>();
 
@@ -67,7 +67,7 @@ public class RBTreeTest {
     }
 
     @Test
-    public void testInsert() throws Exception {
+    public void testInsert() throws Throwable {
         for (MapPair pair : maps) {
             for (char c = 'p'; c <= 'v'; c++) {
                 String s = ("" + c) + c + c;
@@ -80,7 +80,7 @@ public class RBTreeTest {
     }
 
     @Test
-    public void testDelete() throws Exception {
+    public void testDelete() throws Throwable {
         for (MapPair pair : maps) {
             for (char c = 'b'; c <= 'd'; c++) {
                 pair.map.remove((int) c);

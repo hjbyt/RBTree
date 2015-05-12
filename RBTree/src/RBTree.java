@@ -1,3 +1,4 @@
+import java.io.PrintStream;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.BiConsumer;
@@ -511,8 +512,46 @@ public class RBTree {
         return size;
     }
 
+    //TODO XXX
+//    private class PrintingThrowable extends Throwable {
+//        private RBTree tree;
+//
+//        public PrintingThrowable(Throwable cause, RBTree tree) {
+//            super(cause);
+//            this.tree = tree;
+//        }
+//
+//        @Override
+//        public void printStackTrace(PrintStream s) {
+//            this.tree.printTree(s);
+//            super.printStackTrace(s);
+//        }
+//    }
+
+    private void printTree() {
+        printTree(System.out);
+        //TODO XXX
+        //printTree(System.err);
+    }
+
+    private void printTree(PrintStream stream) {
+        //TODO: print tree graph to console, to help debug problems in insert, delete.
+        stream.println("---TODO---");
+    }
+
     // non-private for testing purposes
     void checkTreeInvariants() {
+        try {
+            checkTreeInvariance_();
+        } catch (Throwable throwable) {
+            printTree();
+            throw throwable;
+            //TODO XXX
+//            throw new PrintingThrowable(throwable, this);
+        }
+    }
+
+    private void checkTreeInvariance_() {
         if (rootDummy.hasRightChild()) {
             throw new AssertionError("rootDummy has a right child");
         }
