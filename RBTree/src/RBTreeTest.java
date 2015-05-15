@@ -39,13 +39,13 @@ public class RBTreeTest {
         }
 
         rb0 = new RBTree(map0);
-        rb1 = new RBTree(map1);
+//        rb1 = new RBTree(map1);
         rb0.checkTreeInvariants();
-        rb1.checkTreeInvariants();
+//        rb1.checkTreeInvariants();
 
         maps = new ArrayList<>();
         maps.add(new MapPair(map0, rb0));
-        maps.add(new MapPair(map1, rb1));
+//        maps.add(new MapPair(map1, rb1));
     }
 
     @After

@@ -51,7 +51,7 @@ public class RBTree {
 
         nil = new RBNode(Color.Black);
         nil.parent = rootDummy;
-        //TODO: shuold nil's children be null?
+        //TODO: should nil's children be null?
         nil.left = nil;
         nil.right = nil;
         rootDummy.left = nil;
@@ -125,18 +125,27 @@ public class RBTree {
     }
 
     private RBNode getPositionByKey(int k) {
-        RBNode current = rootDummy;
+        RBNode node = rootDummy;
         while (true) {
-            if (current.key == k) {
-                return current;
+            assert node != nil;
+            assert node != null;
+
+            if (k == node.key) {
+                return node;
             }
-            if (current == nil) {
-                return nil.parent;
-            }
-            if (current.key < k) {
-                current = current.left;
-            } else { // current.key > k
-                current = current.right;
+
+            if (k < node.key) {
+                if (node.hasLeftChild()) {
+                    node = node.left;
+                } else {
+                    return node;
+                }
+            } else { // k > current.key
+                if (node.hasRightChild()) {
+                    node = node.right;
+                } else {
+                    return node;
+                }
             }
         }
     }
@@ -203,6 +212,8 @@ public class RBTree {
         newNode.key = k;
         newNode.item = v;
         newNode.parent = parent;
+        newNode.left = nil;
+        newNode.right = nil;
 
         if (empty()) {
             minNode = newNode;
@@ -544,7 +555,7 @@ public class RBTree {
     // non-private for testing purposes
     void checkTreeInvariants() {
         try {
-            checkTreeInvariance_();
+            checkTreeInvariants_();
         } catch (Throwable throwable) {
             printTree();
             throw throwable;
@@ -553,48 +564,34 @@ public class RBTree {
         }
     }
 
-    private void checkTreeInvariance_() {
-        if (rootDummy.hasRightChild()) {
-            throw new AssertionError("rootDummy has a right child");
-        }
+    private void checkTreeInvariants_() {
+        assert !rootDummy.hasRightChild() : "rootDummy has a right child";
         //TODO XXX: im not sure if the rootDummy should always stay black or not
-//        if (rootDummy.color != Color.Black) {
-//            throw new AssertionError("Invalid color for rootDummy");
-//        }
-        if (rootDummy.parent != rootDummy) {
-            throw new AssertionError("Invalid parent for rootDummy");
-        }
-        if (nil.color != Color.Black) {
-            throw new AssertionError("Invalid color for nil");
-        }
-        if (nil.right != nil || nil.left != nil) {
-            throw new AssertionError("Invalid child for nil");
-        }
-        if (nil.key != 0 || nil.item != null || rootDummy.key != Integer.MAX_VALUE || rootDummy.item != null) {
-            throw new AssertionError("Invalid key/item for nil/rootDummy");
-        }
-        checkSubtreeInvariants(rootDummy);
+        //assert rootDummy.color == Color.Black : "Invalid color for rootDummy";
+        assert rootDummy.parent == rootDummy : "Invalid parent for rootDummy";
+        assert nil.color == Color.Black : "Invalid color for nil";
+        assert nil.right == nil && nil.left == nil : "Invalid child for nil";
+        assert nil.key == 0 : "Invalid key nil";
+        assert nil.item == null : "Invalid item for nil";
+        assert rootDummy.key == Integer.MAX_VALUE : "Invalid key for rootDummy";
+        assert rootDummy.item == null : "Invalid item for rootDummy";
+
+        checkSubtreeInvariants(root());
+
         TreeMap<Integer, String> map = toTreeMap();
-        if (map.size() != size()) {
-            throw new AssertionError("Incorrect size");
-        }
-        if (subtreeMin(root()) != minNode || subtreeMax(root()) != maxNode) {
-            throw new AssertionError("Incorrect min/max node");
-        }
+        assert map.size() == size() : "Incorrect size";
+        assert subtreeMin(root()) == minNode : "Incorrect minNode";
+        assert subtreeMax(root()) == maxNode : "Incorrect maxNode";
     }
 
     // Returns the node black height
     private int checkSubtreeInvariants(RBNode node) {
-        if (node == null) {
-            throw new AssertionError("Invalid node (null)");
-        }
+        assert node != null : "Invalid node (null)";
         if (node == nil) {
             return 1;
         }
 
-        if (node.color == Color.Red && node.parent.color == Color.Red) {
-            throw new AssertionError("Red rule violated");
-        }
+        assert !(node.color == Color.Red && node.parent.color == Color.Red) : "Red rule violated";
 
         int black_length = 0;
         if (node.color == Color.Black) {
@@ -602,21 +599,15 @@ public class RBTree {
         }
 
         if (node.hasLeftChild()) {
-            if (node.left.key >= node.key) {
-                throw new AssertionError("Left child key not lower than node key");
-            }
+            assert node.left.key < node.key : "Left child key not lower than node key";
         }
         if (node.hasRightChild()) {
-            if (node.right.key <= node.key) {
-                throw new AssertionError("Right child key not higher then node key");
-            }
+            assert node.right.key > node.key : "Right child key not higher then node key";
         }
 
         int left_black_length = checkSubtreeInvariants(node.left);
         int right_black_length = checkSubtreeInvariants(node.right);
-        if (left_black_length != right_black_length) {
-            throw new AssertionError("Black rule violated");
-        }
+        assert left_black_length == right_black_length : "Black rule violated";
         black_length += left_black_length;
 
         return black_length;
@@ -741,6 +732,11 @@ public class RBTree {
             } else {
                 return right;
             }
+        }
+
+        @Override
+        public String toString() {
+            return getText();
         }
 
         public String getText() {
