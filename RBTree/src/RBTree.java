@@ -1,6 +1,4 @@
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.BiConsumer;
@@ -52,12 +50,12 @@ public class RBTree {
         nil = new RBNode(Color.Black);
         nil.parent = rootDummy;
         //TODO: should nil's children be null?
-        nil.left = nil;
-        nil.right = nil;
+        nil.left = null;
+        nil.right = null;
         rootDummy.left = nil;
         rootDummy.right = nil;
-        minNode = nil;
-        maxNode = nil;
+        minNode = null;
+        maxNode = null;
 
         size = 0;
     }
@@ -152,10 +150,10 @@ public class RBTree {
 
     private int insertFixup(RBNode toFix) {
         int colorSwitchCount = 0;
-        while (toFix.color == Color.Red) {
+        while (toFix != nil && toFix != root() && toFix != rootDummy && toFix.parent.color == Color.Red) {
             if (toFix.parent == toFix.parent.parent.left) {
                 RBNode uncle = toFix.parent.parent.right;
-                if (uncle.right.color == Color.Red) {
+                if (uncle.color == Color.Red) {
                     toFix.parent.color = Color.Black;
                     uncle.color = Color.Black;
                     toFix.parent.parent.color = Color.Red;
@@ -173,7 +171,7 @@ public class RBTree {
                 }
             } else {
                 RBNode uncle = toFix.parent.parent.left;
-                if (uncle.left.color == Color.Red) {
+                if (uncle.color == Color.Red) {
                     toFix.parent.color = Color.Black;
                     uncle.color = Color.Black;
                     toFix.parent.parent.color = Color.Red;
@@ -191,6 +189,8 @@ public class RBTree {
                 }
             }
         }
+        root().color = Color.Black;
+        colorSwitchCount += 1;
         return colorSwitchCount;
     }
 
@@ -208,33 +208,33 @@ public class RBTree {
             return -1;
         }
 
-        RBNode newNode = new RBNode(Color.Red);
-        newNode.key = k;
-        newNode.item = v;
-        newNode.parent = parent;
-        newNode.left = nil;
-        newNode.right = nil;
+        RBNode node = new RBNode(Color.Red);
+        node.key = k;
+        node.item = v;
+        node.parent = parent;
+        node.left = nil;
+        node.right = nil;
 
         if (empty()) {
-            minNode = newNode;
-            maxNode = newNode;
+            minNode = node;
+            maxNode = node;
         }
 
-        if (newNode.key < parent.key) {
-            parent.left = newNode;
+        if (node.key < parent.key) {
+            parent.left = node;
             if (parent == minNode) {
-                minNode = newNode;
+                minNode = node;
             }
         } else {
-            assert newNode.key > parent.key;
-            parent.right = newNode;
+            assert node.key > parent.key;
+            parent.right = node;
             if (parent == maxNode) {
-                maxNode = newNode;
+                maxNode = node;
             }
         }
 
         size += 1;
-        return insertFixup(parent);
+        return insertFixup(node);
     }
 
     /**
@@ -279,6 +279,7 @@ public class RBTree {
         } else {
             // swap and delete predecessor;
             y = subtreeMin(node.right);
+            assert y != null;
             y_original_color = y.color;
             x = y.right;
             if (y.parent == node) {
@@ -412,6 +413,9 @@ public class RBTree {
     }
 
     private RBNode subtreeMin(RBNode node) {
+        if (node == nil) {
+            return null;
+        }
         while (node.left != nil) {
             node = node.left;
         }
@@ -419,6 +423,9 @@ public class RBTree {
     }
 
     private RBNode subtreeMax(RBNode node) {
+        if (node == nil) {
+            return null;
+        }
         while (node.right != nil) {
             node = node.right;
         }
@@ -436,7 +443,9 @@ public class RBTree {
      * or null if the tree is empty
      */
     public String min() {
-        // Note: if node is nil, then node.item should be null
+        if (minNode == null) {
+            return null;
+        }
         return minNode.item;
     }
 
@@ -447,7 +456,9 @@ public class RBTree {
      * or null if the tree is empty
      */
     public String max() {
-        // Note: if node is nil, then node.item should be null
+        if (minNode == null) {
+            return null;
+        }
         return maxNode.item;
     }
 
@@ -542,14 +553,14 @@ public class RBTree {
 //        }
 //    }
 
-    private void printTree() {
+    void printTree() {
         printTree(System.out);
         //TODO XXX
         //printTree(System.err);
     }
 
-    private void printTree(PrintStream stream) {
-        TreePrinter.print(this.rootDummy, stream);
+    void printTree(PrintStream stream) {
+        rootDummy.printTree(stream);
     }
 
     // non-private for testing purposes
@@ -566,11 +577,10 @@ public class RBTree {
 
     private void checkTreeInvariants_() {
         assert !rootDummy.hasRightChild() : "rootDummy has a right child";
-        //TODO XXX: im not sure if the rootDummy should always stay black or not
-        //assert rootDummy.color == Color.Black : "Invalid color for rootDummy";
+        assert rootDummy.color == Color.Black : "Invalid color for rootDummy";
         assert rootDummy.parent == rootDummy : "Invalid parent for rootDummy";
         assert nil.color == Color.Black : "Invalid color for nil";
-        assert nil.right == nil && nil.left == nil : "Invalid child for nil";
+        assert nil.right == null && nil.left == null : "Invalid child for nil";
         assert nil.key == 0 : "Invalid key nil";
         assert nil.item == null : "Invalid item for nil";
         assert rootDummy.key == Integer.MAX_VALUE : "Invalid key for rootDummy";
@@ -580,7 +590,7 @@ public class RBTree {
 
         TreeMap<Integer, String> map = toTreeMap();
         assert map.size() == size() : "Incorrect size";
-        assert subtreeMin(root()) == minNode : "Incorrect minNode";
+        assert subtreeMin(root()) == minNode : String.format("Incorrect minNode: %s != %s", subtreeMin(root()), minNode);
         assert subtreeMax(root()) == maxNode : "Incorrect maxNode";
     }
 
@@ -621,7 +631,7 @@ public class RBTree {
         }
     }
 
-    private class RBNode implements TreePrinter.PrintableNode {
+    private class RBNode {
 
         public RBNode parent;
         public RBNode left;
@@ -629,6 +639,15 @@ public class RBTree {
         public Color color;
         public int key;
         public String item;
+
+        public RBNode(RBNode parent, RBNode left, RBNode right, Color color, int key, String item) {
+            this.parent = parent;
+            this.left = left;
+            this.right = right;
+            this.color = color;
+            this.key = key;
+            this.item = item;
+        }
 
         public RBNode(Color color) {
             this.color = color;
@@ -718,176 +737,47 @@ public class RBTree {
             return right != nil;
         }
 
-        public TreePrinter.PrintableNode getLeft() {
-            if (this == nil) {
-                return null;
-            } else {
-                return left;
-            }
-        }
-
-        public TreePrinter.PrintableNode getRight() {
-            if (this == nil) {
-                return null;
-            } else {
-                return right;
-            }
-        }
-
         @Override
         public String toString() {
-            return getText();
-        }
-
-        public String getText() {
             String color_string = (color == Color.Black) ? "B" : "R";
             return String.format("%s-%d:%s", color_string, key, item);
         }
-    }
 
-}
-
-
-//adapted from http://stackoverflow.com/a/29704252
-/**
- * Binary tree printer
- *
- * @author MightyPork
- */
-class TreePrinter {
-    /**
-     * Node that can be printed
-     */
-    public interface PrintableNode {
-        /**
-         * Get left child
-         */
-        PrintableNode getLeft();
-
-
-        /**
-         * Get right child
-         */
-        PrintableNode getRight();
-
-
-        /**
-         * Get text to be printed
-         */
-        String getText();
-    }
-
-    /**
-     * Print a tree
-     *
-     * @param root tree root node
-     */
-    public static void print(PrintableNode root, PrintStream stream) {
-        List<List<String>> lines = new ArrayList<>();
-
-        List<PrintableNode> level = new ArrayList<>();
-        List<PrintableNode> next = new ArrayList<>();
-
-        level.add(root);
-        int nn = 1;
-
-        int widest = 0;
-
-        while (nn != 0) {
-            List<String> line = new ArrayList<>();
-
-            nn = 0;
-
-            for (PrintableNode n : level) {
-                if (n == null) {
-                    line.add(null);
-
-                    next.add(null);
-                    next.add(null);
-                } else {
-                    String aa = n.getText();
-                    line.add(aa);
-                    if (aa.length() > widest) widest = aa.length();
-
-                    next.add(n.getLeft());
-                    next.add(n.getRight());
-
-                    if (n.getLeft() != null) nn++;
-                    if (n.getRight() != null) nn++;
-                }
-            }
-
-            if (widest % 2 == 1) widest++;
-
-            lines.add(line);
-
-            List<PrintableNode> tmp = level;
-            level = next;
-            next = tmp;
-            next.clear();
+        //Printing adapted from http://stackoverflow.com/a/19484210
+        public void printTree() {
+            printTree(System.out);
         }
 
-        int perpiece = lines.get(lines.size() - 1).size() * (widest + 4);
-        for (int i = 0; i < lines.size(); i++) {
-            List<String> line = lines.get(i);
-            int hpw = (int) Math.floor(perpiece / 2f) - 1;
-
-            if (i > 0) {
-                for (int j = 0; j < line.size(); j++) {
-
-                    // split node
-                    char c = ' ';
-                    if (j % 2 == 1) {
-                        if (line.get(j - 1) != null) {
-                            //c = (line.get(j) != null) ? '?' : '?';
-                            c = (line.get(j) != null) ? '.' : '.';
-                        } else {
-                            //if (j < line.size() && line.get(j) != null) c = '?';
-                            if (j < line.size() && line.get(j) != null) c = '.';
-                        }
-                    }
-                    stream.print(c);
-
-                    // lines and spaces
-                    if (line.get(j) == null) {
-                        for (int k = 0; k < perpiece - 1; k++) {
-                            stream.print(" ");
-                        }
-                    } else {
-
-                        for (int k = 0; k < hpw; k++) {
-                            //stream.print(j % 2 == 0 ? " " : "?");
-                            stream.print(j % 2 == 0 ? " " : ".");
-                        }
-                        //stream.print(j % 2 == 0 ? "?" : "?");
-                        stream.print(j % 2 == 0 ? "." : ".");
-                        for (int k = 0; k < hpw; k++) {
-                            //stream.print(j % 2 == 0 ? "?" : " ");
-                            stream.print(j % 2 == 0 ? "." : " ");
-                        }
-                    }
-                }
-                stream.println();
+        public void printTree(PrintStream out) {
+            if (right != null) {
+                right.printTree(out, true, "");
             }
-
-            // print line of numbers
-            for (String f : line) {
-                if (f == null) f = "";
-                int gap1 = (int) Math.ceil(perpiece / 2f - f.length() / 2f);
-                int gap2 = (int) Math.floor(perpiece / 2f - f.length() / 2f);
-
-                // a number
-                for (int k = 0; k < gap1; k++) {
-                    stream.print(" ");
-                }
-                stream.print(f);
-                for (int k = 0; k < gap2; k++) {
-                    stream.print(" ");
-                }
+            printNodeValue(out);
+            if (left != null) {
+                left.printTree(out, false, "");
             }
-            stream.println();
+        }
 
-            perpiece /= 2;
+        private void printNodeValue(PrintStream out) {
+            out.print(toString() + '\n');
+        }
+
+        private void printTree(PrintStream out, boolean isRight, String indent) {
+            if (right != null) {
+                right.printTree(out, true, indent + (isRight ? "        " : " |      "));
+            }
+            out.print(indent);
+            if (isRight) {
+                out.print(" /");
+            } else {
+                out.print(" \\");
+            }
+            out.print("----- ");
+            out.print(toString() + '\n');
+            if (left != null) {
+                left.printTree(out, false, indent + (isRight ? " |      " : "        "));
+            }
         }
     }
+
 }
