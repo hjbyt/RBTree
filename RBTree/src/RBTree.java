@@ -111,7 +111,7 @@ public class RBTree {
 
     }
 
-    public RBNode searchNode(int k) {
+    private RBNode searchNode(int k) {
         RBNode node = getPositionByKey(k);
         if (node.key != k) {
             return null;
