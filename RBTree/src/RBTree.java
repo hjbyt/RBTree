@@ -491,22 +491,6 @@ public class RBTree {
         return size;
     }
 
-    //TODO XXX
-//    private class PrintingThrowable extends Throwable {
-//        private RBTree tree;
-//
-//        public PrintingThrowable(Throwable cause, RBTree tree) {
-//            super(cause);
-//            this.tree = tree;
-//        }
-//
-//        @Override
-//        public void printStackTrace(PrintStream s) {
-//            this.tree.printTree(s);
-//            super.printStackTrace(s);
-//        }
-//    }
-
     RBNode select(int index) {
         RBNode node = minNode;
         for (int i = 0; i < index; i++) {
