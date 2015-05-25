@@ -32,16 +32,21 @@ public class RBTree {
     // Default Constructor
     public RBTree() {
         // Create dummy node
-        rootDummy = new RBNode(Color.Black);
+        rootDummy = new RBNode(Color.Black, null);
         //TODO: should we do something different?
         //      because if a key with this value is inserted/deleted it would be an error.
         rootDummy.key = Integer.MAX_VALUE;
         rootDummy.parent = rootDummy;
 
-        nullNode = new RBNode(Color.Black);
+        nullNode = new RBNode(Color.Black, nullNode);
         nullNode.parent = rootDummy;
         rootDummy.left = nullNode;
         rootDummy.right = nullNode;
+
+        rootDummy.right = nullNode;
+        rootDummy.left = nullNode;
+        nullNode.right = nullNode;
+        nullNode.left = nullNode;
 
         size = 0;
     }
@@ -109,17 +114,17 @@ public class RBTree {
     }
 
     private RBNode getPositionByKey(int k) {
-        RBNode current = rootDummy;
+        RBNode current = rootDummy.left;
         while (true) {
             if (current.key == k) {
                 return current;
             }
-            if (current.key < k) {
+            if (current.key > k) {
                 if (nullNode == current.left) {
                     return current;
                 }
                 current = current.left;
-            } else { // current.key > k
+            } else { // current.key < k
                 if (nullNode == current.right) {
                     return current;
                 }
@@ -133,9 +138,7 @@ public class RBTree {
         while (toFix.color == Color.Red) {
             if (toFix.parent == toFix.parent.parent.left) {
                 RBNode uncle = toFix.parent.parent.right;
-                if (null == uncle) {
-                    toFix.rotateRight();
-                } else if (uncle.color == Color.Red) {
+                if (uncle.color == Color.Red) {
                     toFix.parent.color = Color.Black;
                     uncle.color = Color.Black;
                     toFix.parent.parent.color = Color.Red;
@@ -153,9 +156,7 @@ public class RBTree {
                 }
             } else {
                 RBNode uncle = toFix.parent.parent.left;
-                if (null == uncle) {
-                    toFix.rotateLeft();
-                } else if (uncle.left.color == Color.Red) {
+               if (uncle.left.color == Color.Red) {
                     toFix.parent.color = Color.Black;
                     uncle.color = Color.Black;
                     toFix.parent.parent.color = Color.Red;
@@ -173,7 +174,6 @@ public class RBTree {
                 }
             }
         }
-        root.color = Color.Black;
         return colorSwitchCount;
     }
 
@@ -186,12 +186,16 @@ public class RBTree {
      * returns -1 if an item with key k already exists in the tree.
      */
     public int insert(int k, String v) {
+        RBNode newNode = new RBNode(Color.Red, nullNode);
+        newNode.key = k;
+        newNode.item = v;
         if (empty()) {
-            rootDummy = new RBNode(Color.Black);
-            rootDummy.parent = rootDummy;
-            rootDummy.key = k;
-            rootDummy.item = v;
+            rootDummy.left = newNode;
+            newNode.parent = rootDummy;
+            newNode.color = Color.Black;
             size++;
+            minNode = newNode;
+            maxNode = newNode;
             return 0;
         }
         RBNode parent = getPositionByKey(k);
@@ -199,18 +203,15 @@ public class RBTree {
             return -1;
         }
         size++;
-        RBNode newNode = new RBNode(Color.Red);
-        newNode.key = k;
-        newNode.item = v;
         newNode.parent = parent;
-        if (parent.key > newNode.key) {
+        if (parent.key < newNode.key) {
             parent.right = newNode;
-            if (parent == minNode) {
+            if (newNode.key > minNode.key) {
                 minNode = newNode;
             }
-        } else { // parent.key < newNode.key
+        } else { // parent.key > newNode.key
             parent.left = newNode;
-            if (parent == maxNode) {
+            if (newNode.key < maxNode.key) {
                 maxNode = newNode;
             }
         }
@@ -270,49 +271,6 @@ public class RBTree {
 
         return 0;
     }
-
-//    private int deleteFixup(RBNode x) {
-//        int color_switches = 0;
-//
-//        RBNode w;
-//        while (x != rootDummy && x.color == Color.Black) {
-//            if (x == x.parent.left) {
-//                w = x.parent.right;
-//                if (w.color == Color.Red) {
-//                    w.color = Color.Black;
-//                    x.parent.color = Color.Red;
-//                    color_switches += 2;
-//                    x.parent.rotateLeft();
-//                    w = x.parent.right;
-//                }
-//                if (w.left.color == Color.Black && w.right.color == Color.Black) {
-//                    w.color = Color.Red;
-//                    color_switches += 1;
-//                    x = x.parent;
-//                } else {
-//                    if (w.right.color == Color.Black) {
-//                        w.left.color = Color.Black;
-//                        w.color = Color.Red;
-//                        color_switches += 2;
-//                        w.rotateRight();
-//                        w = x.parent.right;
-//                    }
-//                    w.color = x.parent.color;
-//                    x.parent.color = Color.Black;
-//                    w.right.color = Color.Black;
-//                    color_switches += 3;
-//                    x.parent.rotateLeft();
-//                    x = rootDummy;
-//                }
-//            } else {
-//                // other direction
-//            }
-//        }
-//        x.color = Color.Black;
-//        color_switches += 1;
-//
-//        return color_switches;
-//    }
 
     private int deleteFixup(RBNode x) {
         int color_switches = 0;
@@ -417,11 +375,11 @@ public class RBTree {
     }
 
     private void walk(RBNode node, Consumer<RBNode> consumer) {
-        if (null != node.left) {
+        if (nullNode != node.left) {
             walk(node.left, consumer);
         }
         consumer.accept(node);
-        if (null != node.right) {
+        if (nullNode != node.right) {
             walk(node.right, consumer);
         }
     }
@@ -484,8 +442,10 @@ public class RBTree {
         public int key;
         public String item;
 
-        public RBNode(Color color) {
+        public RBNode(Color color, RBNode nullNode) {
             this.color = color;
+            this.left = nullNode;
+            this.right = nullNode;
         }
 
         public RBNode getChild(Direction direction) {
