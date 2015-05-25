@@ -239,6 +239,28 @@ public class RBTreeTest {
     }
 
     @Test
+    public void deleteSpecialCase() {
+            RBTree tree = new RBTree();
+        insert(tree, 1);
+        tree.checkTreeInvariants();
+        insert(tree, 4);
+        tree.checkTreeInvariants();
+        insert(tree, 3);
+        tree.checkTreeInvariants();
+        insert(tree, 2);
+        tree.checkTreeInvariants();
+
+        tree.printTree();
+
+        tree.delete(3);
+        tree.checkTreeInvariants();
+    }
+
+    int insert(RBTree tree, int value) {
+        return tree.insert(value, "" + value);
+    }
+
+    @Test
     public void testFuzz() throws Exception {
         final int VALUES_RANGE = 4000;
         SortedMap<Integer, String> map = map0;
