@@ -462,12 +462,11 @@ public class RBTree {
     private int deleteFixup(RBNode node) {
         int color_switches = 0;
 
-        RBNode brother;
         while (node != root() && node.color == Color.Black) {
             Direction direction = node.relationToParent();
             Direction opposite = oppositeDirection(direction);
 
-            brother = node.getBrother();
+            RBNode brother = node.getBrother();
             if (brother.color == Color.Red) {
                 // Case 1
                 brother.color = Color.Black;
