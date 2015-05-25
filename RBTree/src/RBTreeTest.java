@@ -67,6 +67,13 @@ public class RBTreeTest {
     }
 
     @Test
+    public void testSearchFail() throws Exception {
+        for (MapPair pair : maps) {
+            assertEquals(null, pair.rb.search(500));
+        }
+    }
+
+    @Test
     public void testInsert() throws Throwable {
         for (MapPair pair : maps) {
             for (int i = 11; i <= 19; i++) {
@@ -75,6 +82,15 @@ public class RBTreeTest {
                 pair.rb.insert(i, s);
                 pair.rb.checkTreeInvariants();
                 assertEquals(pair.map, pair.rb.toTreeMap());
+            }
+        }
+    }
+
+    @Test
+    public void testInsertFail() throws Throwable {
+        for (MapPair pair : maps) {
+            for (int key : pair.map.keySet()) {
+                assertEquals(-1, pair.rb.insert(key, "something"));
             }
         }
     }
@@ -93,6 +109,13 @@ public class RBTreeTest {
                 pair.rb.delete(k);
                 pair.rb.checkTreeInvariants();
             }
+        }
+    }
+
+    @Test
+    public void testDeleteFail() throws Throwable {
+        for (MapPair pair : maps) {
+            assertEquals(-1, pair.rb.delete(500));
         }
     }
 
@@ -141,6 +164,17 @@ public class RBTreeTest {
     public void testSize() throws Exception {
         for (MapPair pair : maps) {
             assertEquals(pair.map.size(), pair.rb.size());
+            int old_size = pair.rb.size();
+            for (int i = 15; i < 20; i++) {
+                pair.rb.insert(i, Integer.toString(i));
+                assertEquals(old_size + 1, pair.rb.size());
+                old_size = pair.rb.size();
+            }
+            for (int key : pair.rb.keysToArray()) {
+                pair.rb.delete(key);
+                assertEquals(old_size - 1, pair.rb.size());
+                old_size = pair.rb.size();
+            }
         }
     }
 }
