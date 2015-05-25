@@ -207,7 +207,7 @@ public class RBTreeTest {
             numbers.add(i);
         }
         Collections.shuffle(numbers);
-        int[] randomized = new int [list_length];
+        int[] randomized = new int[list_length];
         for (int i = 0; i < numbers.size(); i++) {
             randomized[i] = numbers.get(i);
         }
@@ -229,7 +229,7 @@ public class RBTreeTest {
 
     @Test
     public void deleteSpecialCase() {
-            RBTree tree = new RBTree();
+        RBTree tree = new RBTree();
         insert(tree, 1);
         tree.checkTreeInvariants();
         insert(tree, 4);
