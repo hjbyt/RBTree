@@ -466,34 +466,38 @@ public class RBTree {
     private int deleteFixup(RBNode x) {
         int color_switches = 0;
 
-        RBNode w;
+        RBNode brother;
         while (x != root() && x.color == Color.Black) {
             Direction direction = x.relationToParent();
             Direction opposite = oppositeDirection(direction);
 
-            w = x.parent.getChild(opposite);
-            if (w.color == Color.Red) {
-                w.color = Color.Black;
+            brother = x.getBrother();
+            if (brother.color == Color.Red) {
+                // Case 1
+                brother.color = Color.Black;
                 x.parent.color = Color.Red;
                 color_switches += 2;
                 x.parent.rotate(direction);
-                w = x.parent.getChild(opposite);
+                brother = x.getBrother();
             }
-            if (w.getChild(direction).color == Color.Black && w.getChild(opposite).color == Color.Black) {
-                w.color = Color.Red;
+            if (brother.getChild(direction).color == Color.Black && brother.getChild(opposite).color == Color.Black) {
+                // Case 2
+                brother.color = Color.Red;
                 color_switches += 1;
                 x = x.parent;
             } else {
-                if (w.getChild(opposite).color == Color.Black) {
-                    w.getChild(direction).color = Color.Black;
-                    w.color = Color.Red;
+                // Case 3
+                if (brother.getChild(opposite).color == Color.Black) {
+                    brother.getChild(direction).color = Color.Black;
+                    brother.color = Color.Red;
                     color_switches += 2;
-                    w.rotate(opposite);
-                    w = x.parent.getChild(opposite);
+                    brother.rotate(opposite);
+                    brother = x.getBrother();
                 }
-                w.color = x.parent.color;
+                // Case 4
+                brother.color = x.parent.color;
                 x.parent.color = Color.Black;
-                w.getChild(opposite).color = Color.Black;
+                brother.getChild(opposite).color = Color.Black;
                 color_switches += 3;
                 x.parent.rotate(direction);
                 x = root();
@@ -961,6 +965,11 @@ public class RBTree {
 
         public Direction relationToParent() {
             return isLeftChild() ? Direction.Left : Direction.Right;
+        }
+
+        public RBNode getBrother() {
+            Direction direction = relationToParent();
+            return parent.getChild(oppositeDirection(direction));
         }
 
         public int childrenCount() {
