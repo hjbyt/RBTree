@@ -253,6 +253,7 @@ public class RBTreeTest {
             } else {
                 map.put(r, "" + r);
             }
+            rb.checkTreeInvariants();
         }
 
         // fuzz
@@ -290,14 +291,14 @@ public class RBTreeTest {
                 if (r == 0) {
                     //min
                     int k = rb.minKey() - 1;
-                    map.put(k, ""+k);
-                    rb.insert(k, ""+k);
+                    map.put(k, "" + k);
+                    rb.insert(k, "" + k);
                     compareAndCheck(map, rb);
                 } else {
                     //max
                     int k = rb.maxKey() + 1;
-                    map.put(k, ""+k);
-                    rb.insert(k, ""+k);
+                    map.put(k, "" + k);
+                    rb.insert(k, "" + k);
                     compareAndCheck(map, rb);
                 }
 
