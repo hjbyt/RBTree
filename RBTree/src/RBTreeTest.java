@@ -241,8 +241,8 @@ public class RBTreeTest {
         SortedMap<Integer, String> map = map0;
         RBTree rb = rb0;
 
-        final int INITIAL_ITEMS = 1000;
-        final int FUZZ_ITERATIONS = 3000;
+        final int INITIAL_ITEMS = 2000;
+        final int FUZZ_ITERATIONS = 6000;
 
         // insert items
         for (int i = 0; i < INITIAL_ITEMS; i++) {
