@@ -244,8 +244,11 @@ public class RBTreeTest {
         SortedMap<Integer, String> map = map0;
         RBTree rb = rb0;
 
+        final int INITIAL_ITEMS = 1000;
+        final int FUZZ_ITERATIONS = 3000;
+
         // insert items
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < INITIAL_ITEMS; i++) {
             int r = rand.nextInt(VALUES_RANGE);
             int return_value = rb.insert(r, "" + r);
             if (map.containsKey(r)) {
@@ -257,7 +260,7 @@ public class RBTreeTest {
         }
 
         // fuzz
-        for (int i = 0; i < 3000; i++) {
+        for (int i = 0; i < FUZZ_ITERATIONS; i++) {
             int r = rand.nextInt(100);
             if (r < 40) {
                 // insert new
