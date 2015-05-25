@@ -216,15 +216,16 @@ public class RBTreeTest {
 
     @Test
     public void printMeasurements() throws Exception {
-        for (int i = 1; i <= 10; i++) {
-            RBTree tree = new RBTree();
-            int[] numbers_to_insert = getRandomNumbers(i * 10000);
-            int color_changes = 0;
-            for (int number : numbers_to_insert) {
-                color_changes += tree.insert(number, Integer.toString(number));
-            }
-            System.out.println(Integer.toString(i) + " : " + Integer.toString(color_changes));
-        }
+        //TODO XXX
+//        for (int i = 1; i <= 10; i++) {
+//            RBTree tree = new RBTree();
+//            int[] numbers_to_insert = getRandomNumbers(i * 10000);
+//            int color_changes = 0;
+//            for (int number : numbers_to_insert) {
+//                color_changes += tree.insert(number, Integer.toString(number));
+//            }
+//            System.out.println(Integer.toString(i) + " : " + Integer.toString(color_changes));
+//        }
     }
 
     @Test
