@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 // or maybe should RBNode be agnostic to the order of node, which is imposed by the tree...
 //TODO: write doc (use generate javadoc?
 //TODO: perform and explain measurements
-//TODO: send
+//TODO: send (don't forget to add our name and ID!)
 
 /**
  * RBTree
