@@ -456,31 +456,31 @@ public class RBTree {
      * Fixes the red-black tree to maintain it's red-black properties after a node was deleted
      * TODO - Add O()
      *
-     * @param x The node from which to start the fixup-process
+     * @param node The node from which to start the fixup-process
      * @return The number of node-color changes that happened during the delete
      */
-    private int deleteFixup(RBNode x) {
+    private int deleteFixup(RBNode node) {
         int color_switches = 0;
 
         RBNode brother;
-        while (x != root() && x.color == Color.Black) {
-            Direction direction = x.relationToParent();
+        while (node != root() && node.color == Color.Black) {
+            Direction direction = node.relationToParent();
             Direction opposite = oppositeDirection(direction);
 
-            brother = x.getBrother();
+            brother = node.getBrother();
             if (brother.color == Color.Red) {
                 // Case 1
                 brother.color = Color.Black;
-                x.parent.color = Color.Red;
+                node.parent.color = Color.Red;
                 color_switches += 2;
-                x.parent.rotate(direction);
-                brother = x.getBrother();
+                node.parent.rotate(direction);
+                brother = node.getBrother();
             }
             if (brother.getChild(direction).color == Color.Black && brother.getChild(opposite).color == Color.Black) {
                 // Case 2
                 brother.color = Color.Red;
                 color_switches += 1;
-                x = x.parent;
+                node = node.parent;
             } else {
                 // Case 3
                 if (brother.getChild(opposite).color == Color.Black) {
@@ -488,18 +488,18 @@ public class RBTree {
                     brother.color = Color.Red;
                     color_switches += 2;
                     brother.rotate(opposite);
-                    brother = x.getBrother();
+                    brother = node.getBrother();
                 }
                 // Case 4
-                brother.color = x.parent.color;
-                x.parent.color = Color.Black;
+                brother.color = node.parent.color;
+                node.parent.color = Color.Black;
                 brother.getChild(opposite).color = Color.Black;
                 color_switches += 3;
-                x.parent.rotate(direction);
-                x = root();
+                node.parent.rotate(direction);
+                node = root();
             }
         }
-        x.color = Color.Black;
+        node.color = Color.Black;
         color_switches += 1;
 
         return color_switches;
