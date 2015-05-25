@@ -428,7 +428,6 @@ public class RBTree {
 
         //Note: now node has 0 or 1 child
 
-
         if (node.hasChildren()) {
             RBNode child = node.hasLeftChild() ? node.left : node.right;
             // Remove node by transplanting it's child over it
@@ -439,10 +438,12 @@ public class RBTree {
                 color_switches = deleteFixup(child);
             }
         } else { // No children
+            // Fix black-rule if needed
             if (node.color == Color.Black) {
                 color_switches = deleteFixup(node);
             }
 
+            // Remove node
             if (node.isLeftChild()) {
                 node.parent.left = nil;
             } else if (node.isRightChild()) {
