@@ -340,6 +340,7 @@ public class RBTree {
      * @return The number of color changes made to nodes in order to maintain the red-black property
      */
     private int insertFixup(RBNode node) {
+        // TODO: put a few comments here
         int colorSwitchCount = 0;
         while (node.parent.color == Color.Red) {
             Direction direction = node.parent.relationToParent();
