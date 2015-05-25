@@ -246,41 +246,88 @@ public class RBTree {
         return deleteNode(node);
     }
 
-    private int deleteNode(RBNode node) {
-        RBNode y = node;
-        Color y_original_color = y.color;
+//    private int deleteNode(RBNode node) {
+//        RBNode y = node;
+//        Color y_original_color = y.color;
+//
+//        RBNode x;
+//        if (node.left == nil) {
+//            x = node.right;
+//            node.transplant(x);
+//        } else if (node.right == nil) {
+//            x = node.left;
+//            node.transplant(x);
+//        } else {
+//            // swap and delete successor;
+//            y = subtreeMin(node.right);
+//            assert y != null;
+//            y_original_color = y.color;
+//            x = y.right;
+//            if (y.parent == node) {
+//                x.parent = y;
+//            } else {
+//                y.transplant(y.right);
+//                y.right = node.right;
+//                y.right.parent = y;
+//            }
+//            node.transplant(y);
+//            y.left = node.left;
+//            y.left.parent = y;
+//            y.color = node.color;
+//        }
+//
+//        if (y_original_color == Color.Black) {
+//            return deleteFixup(x);
+//        }
+//
+//        return 0;
+//    }
 
-        RBNode x;
-        if (node.left == nil) {
-            x = node.right;
-            node.transplant(x);
-        } else if (node.right == nil) {
-            x = node.left;
-            node.transplant(x);
-        } else {
-            // swap and delete successor;
-            y = subtreeMin(node.right);
-            assert y != null;
-            y_original_color = y.color;
-            x = y.right;
-            if (y.parent == node) {
-                x.parent = y;
-            } else {
-                y.transplant(y.right);
-                y.right = node.right;
-                y.right.parent = y;
+    private int deleteNode(RBNode p) {
+        int color_switches = 0;
+
+        // If has both children
+        if (p.left != nil && p.right != nil) {
+            RBNode s = successor(p);
+            if (s == maxNode) {
+                maxNode = p;
             }
-            node.transplant(y);
-            y.left = node.left;
-            y.left.parent = y;
-            y.color = node.color;
+            p.key = s.key;
+            p.item = s.item;
+            p = s;
         }
 
-        if (y_original_color == Color.Black) {
-            return deleteFixup(x);
+        RBNode replacement = p.left != nil ? p.left : p.right;
+
+        // if has children
+        if (replacement != nil) {
+            replacement.parent = p.parent;
+            if (p == p.parent.left) {
+                p.parent.left = replacement;
+            } else {
+                p.parent.right = replacement;
+            }
+
+            p.left = p.right = p.parent = nil;
+
+            if (p.color == Color.Black) {
+                color_switches = deleteFixup(replacement);
+            }
+        } else {
+            // no children
+            if (p.color == Color.Black) {
+                color_switches = deleteFixup(p);
+            }
+
+            if (p == p.parent.left) {
+                p.parent.left = nil;
+            } else if (p == p.parent.right) {
+                p.parent.right = nil;
+            }
+            p.parent = nil;
         }
 
-        return 0;
+        return color_switches;
     }
 
     private int deleteFixup(RBNode x) {
@@ -558,8 +605,10 @@ public class RBTree {
 
         TreeMap<Integer, String> map = toTreeMap();
         assert map.size() == size() : "Incorrect size";
-        assert subtreeMin(root()) == minNode : String.format("Incorrect minNode: %s != %s", subtreeMin(root()), minNode);
-        assert subtreeMax(root()) == maxNode : "Incorrect maxNode";
+        RBNode min = subtreeMin(root());
+        RBNode max = subtreeMax(root());
+        assert min == minNode : String.format("Incorrect minNode: %s != %s", min, minNode);
+        assert max == maxNode : String.format("Incorrect minNode: %s != %s", max, maxNode);
     }
 
     // Returns the node black height

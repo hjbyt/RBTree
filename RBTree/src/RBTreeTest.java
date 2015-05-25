@@ -344,6 +344,7 @@ public class RBTreeTest {
                     compareAndCheck(map, rb);
                 }
             }
+            //TODO: add delete root case
         }
 
         // delete remaining nodes
