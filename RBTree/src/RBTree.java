@@ -709,6 +709,12 @@ public class RBTree {
         public String toString() {
 //            String color_string = (color == Color.Black) ? "B" : "R";
 //            return String.format("%s-%d:%s", color_string, key, item);
+            if (this == nil) {
+                return "nil";
+            }
+            if (this == rootDummy) {
+                return "rootDummy";
+            }
             return color == Color.Red ? String.format("<%d>", key) : "" + key;
         }
 
