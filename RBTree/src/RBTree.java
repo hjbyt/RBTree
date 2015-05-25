@@ -287,45 +287,6 @@ public class RBTree {
     }
 
     /**
-     * private int insertFixup(RBNode toFix)
-     * <p>
-     * Fixes the tree to retain it's red-black properties after a node was inserted
-     * TODO - Add O()
-     *
-     * @param toFix The node from which to start the fix
-     * @return The number of color changes made to nodes in order to maintain the red-black property
-     */
-    private int insertFixup(RBNode toFix) {
-        int colorSwitchCount = 0;
-        while (toFix != nil && toFix != root() && toFix != rootDummy && toFix.parent.color == Color.Red) {
-            Direction direction = toFix.parent.relationToParent();
-            Direction opposite = oppositeDirection(direction);
-            RBNode uncle = toFix.parent.parent.getChild(opposite);
-            if (uncle.color == Color.Red) {
-                toFix.parent.color = Color.Black;
-                uncle.color = Color.Black;
-                toFix.parent.parent.color = Color.Red;
-                colorSwitchCount += 3;
-                toFix = toFix.parent.parent;
-            } else {
-                if (toFix.relationToParent() == opposite) {
-                    toFix = toFix.parent;
-                    toFix.rotate(direction);
-                }
-                toFix.parent.color = Color.Black;
-                toFix.parent.parent.color = Color.Red;
-                colorSwitchCount += 2;
-                toFix.parent.parent.rotate(opposite);
-            }
-        }
-        if (root().color == Color.Red) {
-            root().color = Color.Black;
-            colorSwitchCount += 1;
-        }
-        return colorSwitchCount;
-    }
-
-    /**
      * public int insert(int k, String v)
      * <p>
      * inserts an item with key k and value v to the red black tree.
@@ -366,6 +327,45 @@ public class RBTree {
 
         size += 1;
         return insertFixup(node);
+    }
+
+    /**
+     * private int insertFixup(RBNode toFix)
+     * <p>
+     * Fixes the tree to retain it's red-black properties after a node was inserted
+     * TODO - Add O()
+     *
+     * @param toFix The node from which to start the fix
+     * @return The number of color changes made to nodes in order to maintain the red-black property
+     */
+    private int insertFixup(RBNode toFix) {
+        int colorSwitchCount = 0;
+        while (toFix != nil && toFix != root() && toFix != rootDummy && toFix.parent.color == Color.Red) {
+            Direction direction = toFix.parent.relationToParent();
+            Direction opposite = oppositeDirection(direction);
+            RBNode uncle = toFix.parent.parent.getChild(opposite);
+            if (uncle.color == Color.Red) {
+                toFix.parent.color = Color.Black;
+                uncle.color = Color.Black;
+                toFix.parent.parent.color = Color.Red;
+                colorSwitchCount += 3;
+                toFix = toFix.parent.parent;
+            } else {
+                if (toFix.relationToParent() == opposite) {
+                    toFix = toFix.parent;
+                    toFix.rotate(direction);
+                }
+                toFix.parent.color = Color.Black;
+                toFix.parent.parent.color = Color.Red;
+                colorSwitchCount += 2;
+                toFix.parent.parent.rotate(opposite);
+            }
+        }
+        if (root().color == Color.Red) {
+            root().color = Color.Black;
+            colorSwitchCount += 1;
+        }
+        return colorSwitchCount;
     }
 
     /**
