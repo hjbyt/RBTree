@@ -6,11 +6,14 @@ import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.IntStream;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 //TODO: make a test that randomly inserts and deletes nodes, and checks invariants.
 
 public class RBTreeTest {
+
+    Random rand;
 
     TreeMap<Integer, String> map0;
     TreeMap<Integer, String> map1;
@@ -19,10 +22,10 @@ public class RBTreeTest {
     RBTree rb1;
 
     class MapPair {
-        public Map<Integer, String> map;
+        public SortedMap<Integer, String> map;
         public RBTree rb;
 
-        public MapPair(Map<Integer, String> map, RBTree rb) {
+        public MapPair(SortedMap<Integer, String> map, RBTree rb) {
             this.map = map;
             this.rb = rb;
         }
@@ -32,6 +35,8 @@ public class RBTreeTest {
 
     @Before
     public void setUp() throws Throwable {
+        rand = new Random();
+
         map0 = new TreeMap<>();
         map1 = new TreeMap<>();
 
@@ -82,8 +87,7 @@ public class RBTreeTest {
                 String s = "" + i;
                 pair.map.put(i, s);
                 pair.rb.insert(i, s);
-                pair.rb.checkTreeInvariants();
-                assertEquals(pair.map, pair.rb.toTreeMap());
+                compareAndCheck(pair.map, pair.rb);
             }
         }
     }
@@ -103,15 +107,20 @@ public class RBTreeTest {
             for (int i = 2; i <= 5; i++) {
                 pair.map.remove(i);
                 pair.rb.delete(i);
-                pair.rb.checkTreeInvariants();
-                assertEquals(pair.map, pair.rb.toTreeMap());
+                compareAndCheck(pair.map, pair.rb);
             }
 
             for (int k : pair.rb.keysToArray()) {
+                pair.map.remove(k);
                 pair.rb.delete(k);
-                pair.rb.checkTreeInvariants();
+                compareAndCheck(pair.map, pair.rb);
             }
         }
+    }
+
+    public void compareAndCheck(SortedMap<Integer, String> map, RBTree rbTree) {
+        rbTree.checkTreeInvariants();
+        assertEquals(map, rbTree.toTreeMap());
     }
 
     @Test
@@ -215,4 +224,102 @@ public class RBTreeTest {
             System.out.println(Integer.toString(i) + " : " + Integer.toString(color_changes));
         }
     }
+
+    @Test
+    public void testFuzz() throws Exception {
+        final int VALUES_RANGE = 4000;
+        SortedMap<Integer, String> map = map0;
+        RBTree rb = rb0;
+
+        // insert items
+        for (int i = 0; i < 1000; i++) {
+            int r = rand.nextInt(VALUES_RANGE);
+            int return_value = rb.insert(r, "" + r);
+            if (map.containsKey(r)) {
+                assertEquals(-1, return_value);
+            } else {
+                map.put(r, "" + r);
+            }
+        }
+
+        // fuzz
+        for (int i = 0; i < 3000; i++) {
+            int r = rand.nextInt(100);
+            if (r < 40) {
+                // insert new
+                do {
+                    r = rand.nextInt(VALUES_RANGE);
+                } while (map.containsKey(r));
+                map.put(r, "" + r);
+                assertThat(rb.insert(r, "" + r), not(-1));
+                compareAndCheck(map, rb);
+            } else if (r < 80) {
+                // delete existing
+                int k = getRandomKey(rb);
+                map.remove(k);
+                assertThat(rb.delete(k), not(-1));
+                compareAndCheck(map, rb);
+            } else if (r < 85) {
+                // insert existing
+                int k = getRandomKey(rb);
+                assertThat(rb.insert(k, "" + k), is(-1));
+                compareAndCheck(map, rb);
+            } else if (r < 90) {
+                // delete non-existing
+                do {
+                    r = rand.nextInt(VALUES_RANGE);
+                } while (map.containsKey(r));
+                assertThat(rb.delete(r), is(-1));
+                compareAndCheck(map, rb);
+            } else if (r < 95) {
+                // add min/max
+                r = rand.nextInt(2);
+                if (r == 0) {
+                    //min
+                    int k = rb.minKey() - 1;
+                    map.put(k, ""+k);
+                    rb.insert(k, ""+k);
+                    compareAndCheck(map, rb);
+                } else {
+                    //max
+                    int k = rb.maxKey() + 1;
+                    map.put(k, ""+k);
+                    rb.insert(k, ""+k);
+                    compareAndCheck(map, rb);
+                }
+
+            } else {
+                // delete min/max
+                if (r == 0) {
+                    //min
+                    int k = rb.minKey();
+                    map.remove(k);
+                    rb.delete(k);
+                    compareAndCheck(map, rb);
+                } else {
+                    //max
+                    int k = rb.maxKey();
+                    map.remove(k);
+                    rb.delete(k);
+                    compareAndCheck(map, rb);
+                }
+            }
+        }
+
+        // delete remaining nodes
+        while (!map.isEmpty()) {
+            // delete existing
+            int k = getRandomKey(rb);
+            map.remove(k);
+            assertThat(rb.delete(k), not(-1));
+            compareAndCheck(map, rb);
+        }
+    }
+
+    public int getRandomKey(RBTree rb) {
+        int index = rand.nextInt(rb.size());
+        return rb.selectKey(index);
+    }
+
+    //TODO: add tests for RBNode
 }

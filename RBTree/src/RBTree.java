@@ -4,6 +4,7 @@ import java.util.TreeMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+//TODO: decide which methods should be in RBNode and which shouldn't.
 // e.g. should hasLeftChild say in RBNode (it references nil, which is outside of it)
 // and should successor/predecessor be in RBNode?
 // or maybe should RBNode be agnostic to the order of node, which is imposed by the tree...
@@ -41,7 +42,8 @@ public class RBTree {
     public RBTree() {
         // Create dummy node
         rootDummy = new RBNode(Color.Black);
-        //TODO: should we do something different? Because if a key with this value is inserted/deleted it would be an error.
+        //TODO: should we do something different?
+        //      because if a key with this value is inserted/deleted it would be an error.
         rootDummy.key = Integer.MAX_VALUE;
         rootDummy.parent = rootDummy;
 
@@ -231,6 +233,7 @@ public class RBTree {
             return -1;
         }
 
+        //TODO: make sure these don't affect runtime complexity of delete
         if (size == 1) {
             minNode = null;
             maxNode = null;
@@ -320,7 +323,6 @@ public class RBTree {
         x.color = Color.Black;
         color_switches += 1;
 
-
         return color_switches;
     }
 
@@ -398,6 +400,20 @@ public class RBTree {
         return maxNode.item;
     }
 
+    int minKey() {
+        if (minNode == null) {
+            return 0;
+        }
+        return minNode.key;
+    }
+
+    int maxKey() {
+        if (maxNode == null) {
+            return 0;
+        }
+        return minNode.key;
+    }
+
     private class IndexedConsumer<T> implements Consumer<T> {
         int index;
         BiConsumer<T, Integer> base;
@@ -471,6 +487,34 @@ public class RBTree {
      */
     public int size() {
         return size;
+    }
+
+    //TODO XXX
+//    private class PrintingThrowable extends Throwable {
+//        private RBTree tree;
+//
+//        public PrintingThrowable(Throwable cause, RBTree tree) {
+//            super(cause);
+//            this.tree = tree;
+//        }
+//
+//        @Override
+//        public void printStackTrace(PrintStream s) {
+//            this.tree.printTree(s);
+//            super.printStackTrace(s);
+//        }
+//    }
+
+    RBNode select(int index) {
+        RBNode node = minNode;
+        for (int i = 0; i < index; i++) {
+            node = successor(node);
+        }
+        return node;
+    }
+
+    int selectKey(int index) {
+        return select(index).key;
     }
 
     void printTree() {
