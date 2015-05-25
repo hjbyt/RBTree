@@ -67,8 +67,8 @@ public class RBTreeTest {
 
     @Test
     public void testSearch() throws Exception {
-        assertEquals(map1.get((int) 'c'), rb1.search((int) 'c'));
-        assertEquals(map1.get((int) 'z'), rb1.search((int) 'z'));
+        assertEquals(map1.get(1), rb1.search(1));
+        assertEquals(map1.get(111), rb1.search(111));
     }
 
     @Test
