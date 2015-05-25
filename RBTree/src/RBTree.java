@@ -404,10 +404,6 @@ public class RBTree {
      * @param x The node to delete
      * @return The number of node-color changes that happened during the delete
      */
-    private int deleteNode(RBNode node) {
-        RBNode y = node;
-        Color y_original_color = y.color;
-
     private int deleteNode(RBNode p) {
         int color_switches = 0;
 
