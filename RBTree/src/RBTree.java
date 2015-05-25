@@ -148,45 +148,43 @@ public class RBTree {
         }
     }
 
+    /*
+    RBNode w;
+        while (x != root() && x.color == Color.Black) {
+            Direction direction = x == x.parent.left ? Direction.Left : Direction.Right;
+            Direction opposite = oppositeDirection(direction);
+
+            w = x.parent.getChild(opposite);
+            if (w.color == Color.Red) {
+                w.color = Color.Black;
+                x.parent.color = Color.Red;
+                color_switches += 2;
+                x.parent.rotate(direction);
+                w = x.parent.getChild(opposite);
+     */
+
     private int insertFixup(RBNode toFix) {
         int colorSwitchCount = 0;
         while (toFix != nil && toFix != root() && toFix != rootDummy && toFix.parent.color == Color.Red) {
-            if (toFix.parent == toFix.parent.parent.left) {
-                RBNode uncle = toFix.parent.parent.right;
-                if (uncle.color == Color.Red) {
-                    toFix.parent.color = Color.Black;
-                    uncle.color = Color.Black;
-                    toFix.parent.parent.color = Color.Red;
-                    colorSwitchCount += 3;
-                    toFix = toFix.parent.parent;
-                } else {
-                    if (toFix == toFix.parent.right) {
-                        toFix = toFix.parent;
-                        toFix.rotateLeft();
-                    }
-                    toFix.parent.color = Color.Black;
-                    toFix.parent.parent.color = Color.Red;
-                    colorSwitchCount += 2;
-                    toFix.parent.parent.rotateRight();
+            Direction direction = toFix.relationToParent();
+            Direction opposite = oppositeDirection(direction);
+            RBNode uncle = toFix.parent.parent.getChild(opposite);
+            if (uncle.color == Color.Red) {
+                toFix.parent.color = Color.Black;
+                uncle.color = Color.Black;
+                toFix.parent.parent.color = Color.Red;
+                colorSwitchCount += 3;
+                toFix = toFix.parent.parent;
+            }
+            else {
+                if (toFix.relationToParent() == opposite) {
+                    toFix = toFix.parent;
+                    toFix.rotate(direction);
                 }
-            } else {
-                RBNode uncle = toFix.parent.parent.left;
-                if (uncle.color == Color.Red) {
-                    toFix.parent.color = Color.Black;
-                    uncle.color = Color.Black;
-                    toFix.parent.parent.color = Color.Red;
-                    colorSwitchCount += 3;
-                    toFix = toFix.parent.parent;
-                } else {
-                    if (toFix == toFix.parent.left) {
-                        toFix = toFix.parent;
-                        toFix.rotateRight();
-                    }
-                    toFix.parent.color = Color.Black;
-                    toFix.parent.parent.color = Color.Red;
-                    colorSwitchCount += 2;
-                    toFix.parent.parent.rotateLeft();
-                }
+                toFix.parent.color = Color.Black;
+                toFix.parent.parent.color = Color.Red;
+                colorSwitchCount += 2;
+                toFix.parent.parent.rotate(opposite);
             }
         }
         root().color = Color.Black;
@@ -418,6 +416,8 @@ public class RBTree {
         assert node != maxNode;
         if (node.right != nil) {
             return subtreeMin(node.right);
+        } else if (node.relationToParent() == Direction.Left) {
+            return node.parent;
         } else {
             while (node.relationToParent() == Direction.Right) {
                 node = node.parent;
