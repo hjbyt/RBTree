@@ -291,7 +291,7 @@ public class RBTree {
 
         RBNode w;
         while (x != root() && x.color == Color.Black) {
-            Direction direction = x == x.parent.left ? Direction.Left : Direction.Right;
+            Direction direction = x.relationToParent();
             Direction opposite = oppositeDirection(direction);
 
             w = x.parent.getChild(opposite);
