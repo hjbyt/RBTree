@@ -168,7 +168,6 @@ public class RBTreeTest {
         tree.checkTreeInvariants();
         tree.insert(8400, "4");
         tree.checkTreeInvariants();
-        //tree.printTree();
     }
 
     @Test
