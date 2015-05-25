@@ -1,7 +1,13 @@
+import java.io.PrintStream;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+
+//TODO: decide which methods should be in RBNode and which shouldn't.
+// e.g. should hasLeftChild say in RBNode (it references nil, which is outside of it)
+// and should successor/predecessor be in RBNode?
+// or maybe should RBNode be agnostic to the order of node, which is imposed by the tree...
 
 /**
  * RBTree
@@ -11,6 +17,9 @@ import java.util.function.Consumer;
  */
 
 public class RBTree {
+
+    static Consumer<RBNode> dummyConsumer = (a) -> {
+    };
 
     private enum Color {
         Black,
@@ -26,27 +35,27 @@ public class RBTree {
     private int size;
     private RBNode minNode;
     private RBNode maxNode;
-    private RBNode nullNode;
+    private RBNode nil;
 
 
     // Default Constructor
     public RBTree() {
         // Create dummy node
-        rootDummy = new RBNode(Color.Black, null);
+        rootDummy = new RBNode(Color.Black);
         //TODO: should we do something different?
         //      because if a key with this value is inserted/deleted it would be an error.
         rootDummy.key = Integer.MAX_VALUE;
         rootDummy.parent = rootDummy;
 
-        nullNode = new RBNode(Color.Black, nullNode);
-        nullNode.parent = rootDummy;
-        rootDummy.left = nullNode;
-        rootDummy.right = nullNode;
-
-        rootDummy.right = nullNode;
-        rootDummy.left = nullNode;
-        nullNode.right = nullNode;
-        nullNode.left = nullNode;
+        nil = new RBNode(Color.Black);
+        nil.parent = rootDummy;
+        //TODO: should nil's children be null?
+        nil.left = null;
+        nil.right = null;
+        rootDummy.left = nil;
+        rootDummy.right = nil;
+        minNode = null;
+        maxNode = null;
 
         size = 0;
     }
@@ -72,7 +81,7 @@ public class RBTree {
     }
 
     public void toMap(Map<Integer, String> map) {
-        //TODO
+        walkPreOrder(root(), (node) -> map.put(node.key, node.item));
     }
 
     public TreeMap<Integer, String> toTreeMap() {
@@ -114,28 +123,34 @@ public class RBTree {
     }
 
     private RBNode getPositionByKey(int k) {
-        RBNode current = rootDummy.left;
+        RBNode node = rootDummy;
         while (true) {
-            if (current.key == k) {
-                return current;
+            assert node != nil;
+            assert node != null;
+
+            if (k == node.key) {
+                return node;
             }
-            if (current.key > k) {
-                if (nullNode == current.left) {
-                    return current;
+
+            if (k < node.key) {
+                if (node.hasLeftChild()) {
+                    node = node.left;
+                } else {
+                    return node;
                 }
-                current = current.left;
-            } else { // current.key < k
-                if (nullNode == current.right) {
-                    return current;
+            } else { // k > current.key
+                if (node.hasRightChild()) {
+                    node = node.right;
+                } else {
+                    return node;
                 }
-                current = current.right;
             }
         }
     }
 
-    private int fixupTree(RBNode toFix) {
+    private int insertFixup(RBNode toFix) {
         int colorSwitchCount = 0;
-        while (toFix.color == Color.Red) {
+        while (toFix != nil && toFix != root() && toFix != rootDummy && toFix.parent.color == Color.Red) {
             if (toFix.parent == toFix.parent.parent.left) {
                 RBNode uncle = toFix.parent.parent.right;
                 if (uncle.color == Color.Red) {
@@ -156,7 +171,7 @@ public class RBTree {
                 }
             } else {
                 RBNode uncle = toFix.parent.parent.left;
-               if (uncle.left.color == Color.Red) {
+                if (uncle.color == Color.Red) {
                     toFix.parent.color = Color.Black;
                     uncle.color = Color.Black;
                     toFix.parent.parent.color = Color.Red;
@@ -174,6 +189,8 @@ public class RBTree {
                 }
             }
         }
+        root().color = Color.Black;
+        colorSwitchCount += 1;
         return colorSwitchCount;
     }
 
@@ -186,36 +203,38 @@ public class RBTree {
      * returns -1 if an item with key k already exists in the tree.
      */
     public int insert(int k, String v) {
-        RBNode newNode = new RBNode(Color.Red, nullNode);
-        newNode.key = k;
-        newNode.item = v;
-        if (empty()) {
-            rootDummy.left = newNode;
-            newNode.parent = rootDummy;
-            newNode.color = Color.Black;
-            size++;
-            minNode = newNode;
-            maxNode = newNode;
-            return 0;
-        }
         RBNode parent = getPositionByKey(k);
         if (parent.key == k) {
             return -1;
         }
-        size++;
-        newNode.parent = parent;
-        if (parent.key < newNode.key) {
-            parent.right = newNode;
-            if (newNode.key > minNode.key) {
-                minNode = newNode;
+
+        RBNode node = new RBNode(Color.Red);
+        node.key = k;
+        node.item = v;
+        node.parent = parent;
+        node.left = nil;
+        node.right = nil;
+
+        if (empty()) {
+            minNode = node;
+            maxNode = node;
+        }
+
+        if (node.key < parent.key) {
+            parent.left = node;
+            if (parent == minNode) {
+                minNode = node;
             }
-        } else { // parent.key > newNode.key
-            parent.left = newNode;
-            if (newNode.key < maxNode.key) {
-                maxNode = newNode;
+        } else {
+            assert node.key > parent.key;
+            parent.right = node;
+            if (parent == maxNode) {
+                maxNode = node;
             }
         }
-        return fixupTree(parent);
+
+        size += 1;
+        return insertFixup(node);
     }
 
     /**
@@ -232,6 +251,16 @@ public class RBTree {
             return -1;
         }
 
+        //TODO: make sure these don't affect runtime complexity of delete
+        if (size == 1) {
+            minNode = nil;
+            maxNode = nil;
+        } else if (node == minNode) {
+            minNode = successor(node);
+        } else if (node == maxNode) {
+            maxNode = predecessor(node);
+        }
+
         size -= 1;
         return deleteNode(node);
     }
@@ -241,15 +270,16 @@ public class RBTree {
         Color y_original_color = y.color;
 
         RBNode x;
-        if (node.left == nullNode) {
+        if (node.left == nil) {
             x = node.left;
             node.transplant(x);
-        } else if (node.right == nullNode) {
+        } else if (node.right == nil) {
             x = node.left;
             node.transplant(x);
         } else {
             // swap and delete predecessor;
             y = subtreeMin(node.right);
+            assert y != null;
             y_original_color = y.color;
             x = y.right;
             if (y.parent == node) {
@@ -271,6 +301,49 @@ public class RBTree {
 
         return 0;
     }
+
+//    private int deleteFixup(RBNode x) {
+//        int color_switches = 0;
+//
+//        RBNode w;
+//        while (x != rootDummy && x.color == Color.Black) {
+//            if (x == x.parent.left) {
+//                w = x.parent.right;
+//                if (w.color == Color.Red) {
+//                    w.color = Color.Black;
+//                    x.parent.color = Color.Red;
+//                    color_switches += 2;
+//                    x.parent.rotateLeft();
+//                    w = x.parent.right;
+//                }
+//                if (w.left.color == Color.Black && w.right.color == Color.Black) {
+//                    w.color = Color.Red;
+//                    color_switches += 1;
+//                    x = x.parent;
+//                } else {
+//                    if (w.right.color == Color.Black) {
+//                        w.left.color = Color.Black;
+//                        w.color = Color.Red;
+//                        color_switches += 2;
+//                        w.rotateRight();
+//                        w = x.parent.right;
+//                    }
+//                    w.color = x.parent.color;
+//                    x.parent.color = Color.Black;
+//                    w.right.color = Color.Black;
+//                    color_switches += 3;
+//                    x.parent.rotateLeft();
+//                    x = rootDummy;
+//                }
+//            } else {
+//                // other direction
+//            }
+//        }
+//        x.color = Color.Black;
+//        color_switches += 1;
+//
+//        return color_switches;
+//    }
 
     private int deleteFixup(RBNode x) {
         int color_switches = 0;
@@ -311,32 +384,56 @@ public class RBTree {
         x.color = Color.Black;
         color_switches += 1;
 
+
         return color_switches;
     }
 
-    //XXX
     private RBNode successor(RBNode node) {
-        return null;
+        assert node != maxNode;
+        if (node.right != nil) {
+            return subtreeMin(node.right);
+        } else {
+            while (node.relationToParent() == Direction.Right) {
+                node = node.parent;
+            }
+            return node;
+        }
     }
 
-    //XXX
     private RBNode predecessor(RBNode node) {
-        return null;
+        assert node != minNode;
+        if (node.left != nil) {
+            return subtreeMax(node.left);
+        } else {
+            while (node.relationToParent() == Direction.Left) {
+                node = node.parent;
+            }
+            return node;
+        }
     }
 
     private RBNode subtreeMin(RBNode node) {
-        while (node.left != nullNode) {
+        if (node == nil) {
+            return null;
+        }
+        while (node.left != nil) {
             node = node.left;
         }
         return node;
     }
 
-    //XXX
     private RBNode subtreeMax(RBNode node) {
-        while (node.right != nullNode) {
+        if (node == nil) {
+            return null;
+        }
+        while (node.right != nil) {
             node = node.right;
         }
         return node;
+    }
+
+    private RBNode root() {
+        return rootDummy.left;
     }
 
     /**
@@ -346,6 +443,9 @@ public class RBTree {
      * or null if the tree is empty
      */
     public String min() {
+        if (minNode == null) {
+            return null;
+        }
         return minNode.item;
     }
 
@@ -356,6 +456,9 @@ public class RBTree {
      * or null if the tree is empty
      */
     public String max() {
+        if (minNode == null) {
+            return null;
+        }
         return maxNode.item;
     }
 
@@ -374,14 +477,27 @@ public class RBTree {
         }
     }
 
-    private void walk(RBNode node, Consumer<RBNode> consumer) {
-        if (nullNode != node.left) {
-            walk(node.left, consumer);
+    private void walkPreOrder(RBNode node, Consumer<RBNode> consumer) {
+        walk(node, consumer, dummyConsumer, dummyConsumer);
+    }
+
+    private void walkInOrder(RBNode node, Consumer<RBNode> consumer) {
+        walk(node, dummyConsumer, consumer, dummyConsumer);
+    }
+
+    private void walkPostOrder(RBNode node, Consumer<RBNode> consumer) {
+        walk(node, dummyConsumer, dummyConsumer, consumer);
+    }
+
+    private void walk(RBNode node, Consumer<RBNode> consumerPre, Consumer<RBNode> consumerIn, Consumer<RBNode> consumerPost) {
+        if (node == nil) {
+            return;
         }
-        consumer.accept(node);
-        if (nullNode != node.right) {
-            walk(node.right, consumer);
-        }
+        consumerPre.accept(node);
+        walk(node.left, consumerPre, consumerIn, consumerPost);
+        consumerIn.accept(node);
+        walk(node.right, consumerPre, consumerIn, consumerPost);
+        consumerPost.accept(node);
     }
 
     /**
@@ -392,9 +508,7 @@ public class RBTree {
      */
     public int[] keysToArray() {
         int[] keys = new int[size];
-        if (!empty()) {
-            walk(rootDummy, new IndexedConsumer<>((node, index) -> keys[index] = node.key));
-        }
+        walkInOrder(root(), new IndexedConsumer<>((node, index) -> keys[index] = node.key));
         return keys;
     }
 
@@ -407,9 +521,7 @@ public class RBTree {
      */
     public String[] valuesToArray() {
         String[] items = new String[size];
-        if (!empty()) {
-            walk(rootDummy, new IndexedConsumer<>((node, index) -> items[index] = node.item));
-        }
+        walkInOrder(root(), new IndexedConsumer<>((node, index) -> items[index] = node.item));
         return items;
     }
 
@@ -425,6 +537,92 @@ public class RBTree {
         return size;
     }
 
+    //TODO XXX
+//    private class PrintingThrowable extends Throwable {
+//        private RBTree tree;
+//
+//        public PrintingThrowable(Throwable cause, RBTree tree) {
+//            super(cause);
+//            this.tree = tree;
+//        }
+//
+//        @Override
+//        public void printStackTrace(PrintStream s) {
+//            this.tree.printTree(s);
+//            super.printStackTrace(s);
+//        }
+//    }
+
+    void printTree() {
+        printTree(System.out);
+        //TODO XXX
+        //printTree(System.err);
+    }
+
+    void printTree(PrintStream stream) {
+        rootDummy.printTree(stream);
+    }
+
+    // non-private for testing purposes
+    void checkTreeInvariants() {
+        try {
+            checkTreeInvariants_();
+        } catch (Throwable throwable) {
+            printTree();
+            throw throwable;
+            //TODO XXX
+//            throw new PrintingThrowable(throwable, this);
+        }
+    }
+
+    private void checkTreeInvariants_() {
+        assert !rootDummy.hasRightChild() : "rootDummy has a right child";
+        assert rootDummy.color == Color.Black : "Invalid color for rootDummy";
+        assert rootDummy.parent == rootDummy : "Invalid parent for rootDummy";
+        assert nil.color == Color.Black : "Invalid color for nil";
+        assert nil.right == null && nil.left == null : "Invalid child for nil";
+        assert nil.key == 0 : "Invalid key nil";
+        assert nil.item == null : "Invalid item for nil";
+        assert rootDummy.key == Integer.MAX_VALUE : "Invalid key for rootDummy";
+        assert rootDummy.item == null : "Invalid item for rootDummy";
+
+        checkSubtreeInvariants(root());
+
+        TreeMap<Integer, String> map = toTreeMap();
+        assert map.size() == size() : "Incorrect size";
+        assert subtreeMin(root()) == minNode : String.format("Incorrect minNode: %s != %s", subtreeMin(root()), minNode);
+        assert subtreeMax(root()) == maxNode : "Incorrect maxNode";
+    }
+
+    // Returns the node black height
+    private int checkSubtreeInvariants(RBNode node) {
+        assert node != null : "Invalid node (null)";
+        if (node == nil) {
+            return 1;
+        }
+
+        assert !(node.color == Color.Red && node.parent.color == Color.Red) : "Red rule violated";
+
+        int black_length = 0;
+        if (node.color == Color.Black) {
+            black_length += 1;
+        }
+
+        if (node.hasLeftChild()) {
+            assert node.left.key < node.key : "Left child key not lower than node key";
+        }
+        if (node.hasRightChild()) {
+            assert node.right.key > node.key : "Right child key not higher then node key";
+        }
+
+        int left_black_length = checkSubtreeInvariants(node.left);
+        int right_black_length = checkSubtreeInvariants(node.right);
+        assert left_black_length == right_black_length : "Black rule violated";
+        black_length += left_black_length;
+
+        return black_length;
+    }
+
     private Direction oppositeDirection(Direction direction) {
         if (direction == Direction.Left) {
             return Direction.Right;
@@ -433,7 +631,7 @@ public class RBTree {
         }
     }
 
-    private static class RBNode {
+    private class RBNode {
 
         public RBNode parent;
         public RBNode left;
@@ -442,10 +640,17 @@ public class RBTree {
         public int key;
         public String item;
 
-        public RBNode(Color color, RBNode nullNode) {
+        public RBNode(RBNode parent, RBNode left, RBNode right, Color color, int key, String item) {
+            this.parent = parent;
+            this.left = left;
+            this.right = right;
             this.color = color;
-            this.left = nullNode;
-            this.right = nullNode;
+            this.key = key;
+            this.item = item;
+        }
+
+        public RBNode(Color color) {
+            this.color = color;
         }
 
         public RBNode getChild(Direction direction) {
@@ -512,6 +717,67 @@ public class RBTree {
             oldLeft.setRight(this);
         }
 
+        public boolean isRightChild() {
+            return parent.right == this;
+        }
+
+        public boolean isLeftChild() {
+            return parent.left == this;
+        }
+
+        public Direction relationToParent() {
+            return isLeftChild() ? Direction.Left : Direction.Right;
+        }
+
+        public boolean hasLeftChild() {
+            return left != nil;
+        }
+
+        public boolean hasRightChild() {
+            return right != nil;
+        }
+
+        @Override
+        public String toString() {
+            String color_string = (color == Color.Black) ? "B" : "R";
+            return String.format("%s-%d:%s", color_string, key, item);
+        }
+
+        //Printing adapted from http://stackoverflow.com/a/19484210
+        public void printTree() {
+            printTree(System.out);
+        }
+
+        public void printTree(PrintStream out) {
+            if (right != null) {
+                right.printTree(out, true, "");
+            }
+            printNodeValue(out);
+            if (left != null) {
+                left.printTree(out, false, "");
+            }
+        }
+
+        private void printNodeValue(PrintStream out) {
+            out.print(toString() + '\n');
+        }
+
+        private void printTree(PrintStream out, boolean isRight, String indent) {
+            if (right != null) {
+                right.printTree(out, true, indent + (isRight ? "        " : " |      "));
+            }
+            out.print(indent);
+            if (isRight) {
+                out.print(" /");
+            } else {
+                out.print(" \\");
+            }
+            out.print("----- ");
+            out.print(toString() + '\n');
+            if (left != null) {
+                left.printTree(out, false, indent + (isRight ? " |      " : "        "));
+            }
+        }
     }
 
 }

@@ -6,6 +6,8 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 
+//TODO: make a test that randomly inserts and deletes nodes, and checks invariants.
+
 public class RBTreeTest {
 
     TreeMap<Integer, String> map0;
@@ -27,17 +29,19 @@ public class RBTreeTest {
     List<MapPair> maps;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() throws Throwable {
         map0 = new TreeMap<>();
         map1 = new TreeMap<>();
 
-        for (char c = 'a'; c <= 'g'; c++) {
-            String s = ("" + c) + c + c;
-            map1.put((int) c, s);
+        for (int i = 1; i <= 9; i++) {
+            String s = "" + i;
+            map1.put(i, s);
         }
 
         rb0 = new RBTree(map0);
         rb1 = new RBTree(map1);
+        rb0.checkTreeInvariants();
+        rb1.checkTreeInvariants();
 
         maps = new ArrayList<>();
         maps.add(new MapPair(map0, rb0));
@@ -48,6 +52,46 @@ public class RBTreeTest {
     public void tearDown() throws Exception {
 
     }
+
+    //TODO XXX
+//    @Test
+//    public void testRotate() throws Exception {
+//        RBTree.RBNode node = new RBTree.RBNode(null, null, null, RBTree.Color.Black, 5, "5");
+//        RBTree t = new RBTree();
+//        t.insert(50, "50");
+//        t.insert(100, "100");
+//        t.insert(20, "20");
+//        t.insert(10, "10");
+//        t.insert(5, "5");
+//        //t.printTree();
+//        t.rootDummy.printTree();
+//
+//        System.out.println("***************************");
+//
+//        t.root().rotateRight();
+//        t.rootDummy.printTree();
+//
+//        System.out.println("***************************");
+//
+//        t.root().rotateLeft();
+//        t.rootDummy.printTree();
+//
+//        System.out.println("***************************");
+//        System.out.println(t.root().left.left);
+//        System.out.println("***************************");
+//
+//        t.root().left.left.rotateRight();
+//
+//        t.root().printTree();
+//
+//        System.out.println("***************************");
+//        System.out.println(t.root().left.left);
+//        System.out.println("***************************");
+//
+//        t.root().left.left.rotateLeft();
+//
+//        t.root().printTree();
+//    }
 
     @Test
     public void testEmpty() throws Exception {
@@ -63,39 +107,45 @@ public class RBTreeTest {
     }
 
     @Test
-    public void testInsert() throws Exception {
+    public void testInsert() throws Throwable {
         for (MapPair pair : maps) {
-            for (char c = 'p'; c <= 'v'; c++) {
-                String s = ("" + c) + c + c;
-                pair.map.put((int) c, s);
-                pair.rb.insert((int) c, s);
+            for (int i = 11; i <= 19; i++) {
+                String s = "" + i;
+                pair.map.put(i, s);
+                pair.rb.insert(i, s);
+                pair.rb.checkTreeInvariants();
                 assertEquals(pair.map, pair.rb.toTreeMap());
             }
         }
     }
 
     @Test
-    public void testDelete() throws Exception {
+    public void testDelete() throws Throwable {
         for (MapPair pair : maps) {
-            for (char c = 'b'; c <= 'd'; c++) {
-                pair.map.remove((int) c);
-                pair.rb.delete((int) c);
+            for (int i = 2; i <= 5; i++) {
+                pair.map.remove(i);
+                pair.rb.delete(i);
+                pair.rb.checkTreeInvariants();
                 assertEquals(pair.map, pair.rb.toTreeMap());
+            }
+
+            for (int k : pair.rb.keysToArray()) {
+                pair.rb.delete(k);
+                pair.rb.checkTreeInvariants();
             }
         }
     }
 
     @Test
-    public void testMin() throws Exception {
+    public void testMinMax() throws Exception {
         for (MapPair pair : maps) {
-            assertEquals(Collections.min(pair.map.values()), pair.rb.min());
-        }
-    }
-
-    @Test
-    public void testMax() throws Exception {
-        for (MapPair pair : maps) {
-            assertEquals(Collections.max(pair.map.values()), pair.rb.max());
+            if (pair.map.isEmpty()) {
+                assert pair.rb.max() == null;
+                assert pair.rb.min() == null;
+            } else {
+                assertEquals(Collections.max(pair.map.values()), pair.rb.max());
+                assertEquals(Collections.min(pair.map.values()), pair.rb.min());
+            }
         }
     }
 
