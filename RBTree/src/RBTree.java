@@ -171,8 +171,10 @@ public class RBTree {
                 toFix.parent.parent.rotate(opposite);
             }
         }
-        root().color = Color.Black;
-        colorSwitchCount += 1;
+        if (root().color == Color.Red) {
+            root().color = Color.Black;
+            colorSwitchCount += 1;
+        }
         return colorSwitchCount;
     }
 
