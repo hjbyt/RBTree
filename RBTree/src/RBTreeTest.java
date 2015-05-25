@@ -158,18 +158,6 @@ public class RBTreeTest {
     }
 
     @Test
-    public void simpleDelete() throws Exception {
-        RBTree tree = new RBTree();
-        tree.insert(17, "a");
-        tree.insert(16, "b");
-        tree.insert(19, "c");
-        tree.insert(18, "d");
-        tree.checkTreeInvariants();
-        tree.printTree();
-        tree.delete(16);
-    }
-
-    @Test
     public void testValuesToArray() throws Exception {
         for (MapPair pair : maps) {
             List<String> mapValues = new ArrayList<>(pair.map.values());
@@ -228,29 +216,6 @@ public class RBTreeTest {
 //            }
 //            System.out.println(Integer.toString(i) + " : " + Integer.toString(color_changes));
 //        }
-    }
-
-    @Test
-    public void deleteSpecialCase() {
-        RBTree tree = new RBTree();
-        insert(tree, 1);
-        tree.checkTreeInvariants();
-        insert(tree, 4);
-        tree.checkTreeInvariants();
-        insert(tree, 3);
-        tree.checkTreeInvariants();
-        insert(tree, 2);
-        tree.checkTreeInvariants();
-
-        tree.printTreeMinimal();
-        System.out.println("******************");
-
-        tree.delete(4);
-        tree.checkTreeInvariants();
-    }
-
-    int insert(RBTree tree, int value) {
-        return tree.insert(value, "" + value);
     }
 
     @Test
@@ -353,6 +318,4 @@ public class RBTreeTest {
         int index = rand.nextInt(rb.size());
         return rb.selectKey(index);
     }
-
-    //TODO: add tests for RBNode
 }
