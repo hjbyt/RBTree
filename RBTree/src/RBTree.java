@@ -253,8 +253,8 @@ public class RBTree {
 
         //TODO: make sure these don't affect runtime complexity of delete
         if (size == 1) {
-            minNode = nil;
-            maxNode = nil;
+            minNode = null;
+            maxNode = null;
         } else if (node == minNode) {
             minNode = successor(node);
         } else if (node == maxNode) {
@@ -271,7 +271,7 @@ public class RBTree {
 
         RBNode x;
         if (node.left == nil) {
-            x = node.left;
+            x = node.right;
             node.transplant(x);
         } else if (node.right == nil) {
             x = node.left;
@@ -306,7 +306,7 @@ public class RBTree {
 //        int color_switches = 0;
 //
 //        RBNode w;
-//        while (x != rootDummy && x.color == Color.Black) {
+//        while (x != root() && x.color == Color.Black) {
 //            if (x == x.parent.left) {
 //                w = x.parent.right;
 //                if (w.color == Color.Red) {
@@ -333,10 +333,36 @@ public class RBTree {
 //                    w.right.color = Color.Black;
 //                    color_switches += 3;
 //                    x.parent.rotateLeft();
-//                    x = rootDummy;
+//                    x = root();
 //                }
 //            } else {
-//                // other direction
+//                w = x.parent.left;
+//                if (w.color == Color.Red) {
+//                    w.color = Color.Black;
+//                    x.parent.color = Color.Red;
+//                    color_switches += 2;
+//                    x.parent.rotateRight();
+//                    w = x.parent.left;
+//                }
+//                if (w.right.color == Color.Black && w.left.color == Color.Black) {
+//                    w.color = Color.Red;
+//                    color_switches += 1;
+//                    x = x.parent;
+//                } else {
+//                    if (w.left.color == Color.Black) {
+//                        w.right.color = Color.Black;
+//                        w.color = Color.Red;
+//                        color_switches += 2;
+//                        w.rotateLeft();
+//                        w = x.parent.left;
+//                    }
+//                    w.color = x.parent.color;
+//                    x.parent.color = Color.Black;
+//                    w.left.color = Color.Black;
+//                    color_switches += 3;
+//                    x.parent.rotateRight();
+//                    x = root();
+//                }
 //            }
 //        }
 //        x.color = Color.Black;
@@ -349,7 +375,7 @@ public class RBTree {
         int color_switches = 0;
 
         RBNode w;
-        while (x != rootDummy && x.color == Color.Black) {
+        while (x != root() && x.color == Color.Black) {
             Direction direction = x == x.parent.left ? Direction.Left : Direction.Right;
             Direction opposite = oppositeDirection(direction);
 
@@ -378,7 +404,7 @@ public class RBTree {
                 w.getChild(opposite).color = Color.Black;
                 color_switches += 3;
                 x.parent.rotate(direction);
-                x = rootDummy;
+                x = root();
             }
         }
         x.color = Color.Black;
