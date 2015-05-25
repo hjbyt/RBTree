@@ -18,27 +18,80 @@ import java.util.function.Consumer;
 
 public class RBTree {
 
+    /**
+     * static Consumer<RBNode> dummyConsumer
+     * <p>
+     * A consumer for RBNodes that does nothing. Is used with inside the different version
+     * of the walk function
+     */
     static Consumer<RBNode> dummyConsumer = (a) -> {
     };
 
+    /**
+     * private enum Color
+     * <p>
+     * Represents a possible color for a node in the red black tree.
+     * <p>
+     */
     private enum Color {
         Black,
         Red,
     }
 
+    /**
+     * private enum Direction
+     * <p>
+     * An enum used to represent a child's direction for a node in the tree.
+     * The enum is used in order to make the Insert and Delete function direction-agnositc
+     * in order to share code between the symmetric sides for edge-cases
+     * <p>
+     */
     private enum Direction {
         Left,
         Right,
     }
 
+    /**
+     * private RBNode rootDummy
+     * <p>
+     * A dummy root used (just like the dummy sentinel in Cormen)
+     */
     private RBNode rootDummy;
+    /**
+     * private int size
+     * <p>
+     * A member that holds the number of nodes in the tree
+     */
     private int size;
+    /**
+     * private RBNode minNode;
+     * <p>
+     * Holds the node with the minimum value - for optimizing the "min" function
+     */
     private RBNode minNode;
+    /**
+     * private RBNode maxNode;
+     * <p>
+     * Holds the node with the maximum value - for optimizing the "max" function
+     */
     private RBNode maxNode;
+    /**
+     * private RBNode nil
+     * <p>
+     * A dummy value used as a NULL child for all the leaves in the tree
+     */
     private RBNode nil;
 
 
-    // Default Constructor
+    /**
+     * public RBTree
+     * <p>
+     * A default constructor for the RBTree class
+     * Works at O(1).
+     * <p>
+     * precondition: none
+     * postcondition: none
+     */
     public RBTree() {
         // Create dummy node
         rootDummy = new RBNode(Color.Black);
@@ -59,30 +112,90 @@ public class RBTree {
         size = 0;
     }
 
+    /**
+     * public RBTree(Iterable<Map.Entry<Integer, String>> items)
+     * <p>
+     * A constructor for the tree that is initialized with a list of key-value pairs
+     * * Works at O(n) where n is the number of key-values pairs in the iterable.
+     * <p>
+     * precondition: items != null
+     * postcondition: none
+     * @param items A list of key value pairs to initialize the tree with
+     */
     public RBTree(Iterable<Map.Entry<Integer, String>> items) {
         this();
         insertItems(items);
     }
 
+    /**
+     * public RBTree(Map<Integer, String> map)
+     * <p>
+     * A constructor for the tree that is initialized with a given map for the keys and values
+     * * Works at O(n) where n is the number of key-values pairs in the map.
+     * <p>
+     * precondition: map != null
+     * postcondition: none
+     * @param map A map keys and values to initialize the tree with
+     */
     public RBTree(Map<Integer, String> map) {
         this();
         insertItems(map);
     }
 
+    /**
+     * public void insertItems(Map<Integer, String> map)
+     * <p>
+     * Inserts all the items in the map into the tree
+     * * Works at O(n) where n is the number of key-values pairs in the map.
+     * <p>
+     * precondition: map != null
+     * postcondition: none
+     * @param map A map keys and values to insert into the tree
+     */
     public void insertItems(Map<Integer, String> map) {
         insertItems(map.entrySet());
     }
 
+    /**
+     * public void insertItems(Iterable<Map.Entry<Integer, String>> items)
+     * <p>
+     * Inserts all the items in the list into the tree.
+     * Works at O(n) where n is the number of key-values pairs in the iterable.
+     * <p>
+     * precondition: map != null
+     * postcondition: none
+     * @param items The items to insert into the tree
+     */
     public void insertItems(Iterable<Map.Entry<Integer, String>> items) {
         for (Map.Entry<Integer, String> item : items) {
             insert(item.getKey(), item.getValue());
         }
     }
 
+    /**
+     * public void toMap(Map<Integer, String> map)
+     * <p>
+     * Inserts all the elements in the tree into the given map
+     * Works at O(n) where n is the number of nodes in the tree
+     * <p>
+     * precondition: map != null
+     * postcondition: none
+     * @param map The map to insert all the tree's elements into
+     */
     public void toMap(Map<Integer, String> map) {
         walkPreOrder(root(), (node) -> map.put(node.key, node.item));
     }
 
+    /**
+     * public TreeMap<Integer, String> toTreeMap()
+     * <p>
+     * Returns a representation of the tree as a native java TreeMap
+     * Works at O(n) where n is the number of nodes in the tree
+     * <p>
+     * precondition: none
+     * postcondition: none
+     * @return A TreeMap that holds all the key-value pairs from the tree
+     */
     public TreeMap<Integer, String> toTreeMap() {
         TreeMap<Integer, String> map = new TreeMap<>();
         toMap(map);
@@ -93,6 +206,7 @@ public class RBTree {
      * public boolean empty()
      * <p>
      * returns true if and only if the tree is empty
+     * @return Says whether the tree is empty or not
      */
     public boolean empty() {
         return size == 0;
@@ -103,6 +217,9 @@ public class RBTree {
      * <p>
      * returns the value of an item with key k if it exists in the tree
      * otherwise, returns null
+     * Works in O(logn) where n is the number of elements in the tree
+     * @param k The key by which to look up the value
+     * @return A string if the matching key is found, or null otherwise
      */
     public String search(int k) {
         RBNode node = searchNode(k);
@@ -113,6 +230,14 @@ public class RBTree {
 
     }
 
+    /**
+     * private RBNode searchNode(int k)
+     * <p>
+     * Looks up a RBNode using a search key
+     * Works in O(logn) where n is the number of nodes in the tree
+     * @param k The key by which to look up the node
+     * @return The holding node if it's found, or null otherwise
+     */
     private RBNode searchNode(int k) {
         RBNode node = getPositionByKey(k);
         if (node.key != k) {
@@ -121,6 +246,14 @@ public class RBTree {
         return node;
     }
 
+    /**
+     * private RBNode getPositionByKey(int k)
+     * <p>
+     * Gets the node under which to insert a node with the specified key value, or returns the node holding the value
+     * Works in O(logn) where n is the number of nodes in the tree
+     * @param k The key to look by
+     * @return The parent under which to insert the new node, or the current node if the value is already present
+     */
     private RBNode getPositionByKey(int k) {
         RBNode node = rootDummy;
         while (true) {
@@ -147,6 +280,13 @@ public class RBTree {
         }
     }
 
+    /**
+     * private int insertFixup(RBNode toFix)
+     * <p>
+     * Fixes the tree to retain it's red-black properties after a node was inserted
+     * @param toFix The node from which to start the fix
+     * @return The number of color changes made to nodes in order to maintain the red-black property
+     */
     private int insertFixup(RBNode toFix) {
         int colorSwitchCount = 0;
         while (toFix != nil && toFix != root() && toFix != rootDummy && toFix.parent.color == Color.Red) {
