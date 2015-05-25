@@ -418,6 +418,20 @@ public class RBTree {
         return maxNode.item;
     }
 
+    int minKey() {
+        if (minNode == null) {
+            return 0;
+        }
+        return minNode.key;
+    }
+
+    int maxKey() {
+        if (maxNode == null) {
+            return 0;
+        }
+        return minNode.key;
+    }
+
     private class IndexedConsumer<T> implements Consumer<T> {
         int index;
         BiConsumer<T, Integer> base;
@@ -508,6 +522,18 @@ public class RBTree {
 //            super.printStackTrace(s);
 //        }
 //    }
+
+    RBNode select(int index) {
+        RBNode node = minNode;
+        for (int i = 0; i < index; i++) {
+            node = successor(node);
+        }
+        return node;
+    }
+
+    int selectKey(int index) {
+        return select(index).key;
+    }
 
     void printTree() {
         printTree(System.out);
