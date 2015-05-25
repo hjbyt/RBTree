@@ -255,13 +255,38 @@ public class RBTreeTest {
     }
 
     @Test
+    public void deleteSpecialCase() {
+            RBTree tree = new RBTree();
+        insert(tree, 1);
+        tree.checkTreeInvariants();
+        insert(tree, 4);
+        tree.checkTreeInvariants();
+        insert(tree, 3);
+        tree.checkTreeInvariants();
+        insert(tree, 2);
+        tree.checkTreeInvariants();
+
+        tree.printTree();
+
+        tree.delete(3);
+        tree.checkTreeInvariants();
+    }
+
+    int insert(RBTree tree, int value) {
+        return tree.insert(value, "" + value);
+    }
+
+    @Test
     public void testFuzz() throws Exception {
         final int VALUES_RANGE = 4000;
         SortedMap<Integer, String> map = map0;
         RBTree rb = rb0;
 
+        final int INITIAL_ITEMS = 1000;
+        final int FUZZ_ITERATIONS = 3000;
+
         // insert items
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < INITIAL_ITEMS; i++) {
             int r = rand.nextInt(VALUES_RANGE);
             int return_value = rb.insert(r, "" + r);
             if (map.containsKey(r)) {
@@ -269,10 +294,11 @@ public class RBTreeTest {
             } else {
                 map.put(r, "" + r);
             }
+            rb.checkTreeInvariants();
         }
 
         // fuzz
-        for (int i = 0; i < 3000; i++) {
+        for (int i = 0; i < FUZZ_ITERATIONS; i++) {
             int r = rand.nextInt(100);
             if (r < 40) {
                 // insert new
@@ -306,14 +332,14 @@ public class RBTreeTest {
                 if (r == 0) {
                     //min
                     int k = rb.minKey() - 1;
-                    map.put(k, ""+k);
-                    rb.insert(k, ""+k);
+                    map.put(k, "" + k);
+                    rb.insert(k, "" + k);
                     compareAndCheck(map, rb);
                 } else {
                     //max
                     int k = rb.maxKey() + 1;
-                    map.put(k, ""+k);
-                    rb.insert(k, ""+k);
+                    map.put(k, "" + k);
+                    rb.insert(k, "" + k);
                     compareAndCheck(map, rb);
                 }
 
