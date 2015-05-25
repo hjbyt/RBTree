@@ -2,7 +2,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.lang.reflect.Array;
 import java.util.*;
+import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
 
@@ -175,6 +177,42 @@ public class RBTreeTest {
                 assertEquals(old_size - 1, pair.rb.size());
                 old_size = pair.rb.size();
             }
+        }
+    }
+
+    private int[] getRandomNumbers(int list_length) {
+        ArrayList<Integer> numbers = new ArrayList<>();
+        for (int i = 1; i < list_length; i++) {
+            numbers.add(i);
+        }
+        Collections.shuffle(numbers);
+        int[] randomized = new int [list_length];
+        for (int i = 0; i < numbers.size(); i++) {
+            randomized[i] = numbers.get(i);
+        }
+        return randomized;
+    }
+
+    private void clearTree(RBTree tree) {
+        for (int key : tree.keysToArray()) {
+            System.out.println("**************************************");
+            tree.printTree();
+            tree.delete(key);
+            tree.checkTreeInvariants();
+        }
+    }
+
+    @Test
+    public void printMeasurements() throws Exception {
+        for (int i = 1; i <= 10; i++) {
+            int[] numbers_to_insert = getRandomNumbers(i * 10);
+            clearTree(rb1);
+            int color_changes = 0;
+            for (int number : numbers_to_insert) {
+                color_changes += rb1.insert(number, Integer.toString(number));
+                rb1.checkTreeInvariants();
+            }
+            System.out.println(Integer.toString(i) + " : " + Integer.toString(color_changes));
         }
     }
 }

@@ -328,8 +328,6 @@ public class RBTree {
         assert node != maxNode;
         if (node.right != nil) {
             return subtreeMin(node.right);
-        } else if (node.relationToParent() == Direction.Left) {
-            return node.parent;
         } else {
             while (node.relationToParent() == Direction.Right) {
                 node = node.parent;
