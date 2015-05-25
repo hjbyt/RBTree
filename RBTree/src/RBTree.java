@@ -8,6 +8,9 @@ import java.util.function.Consumer;
 // e.g. should hasLeftChild say in RBNode (it references nil, which is outside of it)
 // and should successor/predecessor be in RBNode?
 // or maybe should RBNode be agnostic to the order of node, which is imposed by the tree...
+//TODO: write doc (use generate javadoc?
+//TODO: perform and explain measurements
+//TODO: send
 
 /**
  * RBTree
