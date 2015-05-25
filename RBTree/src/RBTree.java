@@ -406,51 +406,48 @@ public class RBTree {
      * Deletes a node from the RBTree
      * * TODO - Add O()
      *
-     * @param p The node to delete
+     * @param node The node to delete
      * @return The number of node-color changes that happened during the delete
      */
-    private int deleteNode(RBNode p) {
+    private int deleteNode(RBNode node) {
         int color_switches = 0;
 
         // If has both children
-        if (p.left != nil && p.right != nil) {
-            RBNode s = successor(p);
-            if (s == maxNode) {
-                maxNode = p;
+        if (node.childrenCount() == 2) {
+            // Place the successor instead of the node to delete
+            RBNode successorNode = successor(node);
+            node.key = successorNode.key;
+            node.item = successorNode.item;
+            // Fix maxNode if necessary
+            if (successorNode == maxNode) {
+                maxNode = node;
             }
-            p.key = s.key;
-            p.item = s.item;
-            p = s;
+            // Set the node to delete to be the successor node
+            node = successorNode;
         }
 
-        RBNode replacement = p.left != nil ? p.left : p.right;
+        //Note: now node has 0 or 1 child
 
-        // if has children
-        if (replacement != nil) {
-            replacement.parent = p.parent;
-            if (p == p.parent.left) {
-                p.parent.left = replacement;
-            } else {
-                p.parent.right = replacement;
+
+        if (node.hasChildren()) {
+            RBNode child = node.hasLeftChild() ? node.left : node.right;
+            // Remove node by transplanting it's child over it
+            node.transplant(child);
+
+            // Fix black-rule if needed
+            if (node.color == Color.Black) {
+                color_switches = deleteFixup(child);
+            }
+        } else { // No children
+            if (node.color == Color.Black) {
+                color_switches = deleteFixup(node);
             }
 
-            p.left = p.right = p.parent = nil;
-
-            if (p.color == Color.Black) {
-                color_switches = deleteFixup(replacement);
+            if (node.isLeftChild()) {
+                node.parent.left = nil;
+            } else if (node.isRightChild()) {
+                node.parent.right = nil;
             }
-        } else {
-            // no children
-            if (p.color == Color.Black) {
-                color_switches = deleteFixup(p);
-            }
-
-            if (p == p.parent.left) {
-                p.parent.left = nil;
-            } else if (p == p.parent.right) {
-                p.parent.right = nil;
-            }
-            p.parent = nil;
         }
 
         return color_switches;
@@ -869,6 +866,17 @@ public class RBTree {
 
         public Direction relationToParent() {
             return isLeftChild() ? Direction.Left : Direction.Right;
+        }
+
+        public int childrenCount() {
+            int count = 0;
+            if (hasLeftChild()) count += 1;
+            if (hasRightChild()) count += 1;
+            return count;
+        }
+
+        public boolean hasChildren() {
+            return childrenCount() > 0;
         }
 
         public boolean hasLeftChild() {
