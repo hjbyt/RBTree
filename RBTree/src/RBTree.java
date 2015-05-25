@@ -762,6 +762,27 @@ public class RBTree {
         return size;
     }
 
+    /**
+     * private Direction oppositeDirection(Direction direction)
+     * <p>
+     * Flips the given direction, used for making the insert and delete more symmetric
+     * precondition: none
+     * postcondition: none
+     * @param direction The direction to flip
+     * @return The opposite direction from the one given
+     */
+    private Direction oppositeDirection(Direction direction) {
+        if (direction == Direction.Left) {
+            return Direction.Right;
+        } else {
+            return Direction.Left;
+        }
+    }
+
+    // Note - All the function from here on down are just for debugging or testing purpose.
+    // Because of that they are package-private (so we could use them in RBTreeTest), but we don't
+    // document them because they aren't required or needed for any external use
+
     RBNode select(int index) {
         RBNode node = minNode;
         for (int i = 0; i < index; i++) {
@@ -791,7 +812,6 @@ public class RBTree {
         start.printTree(stream, sentinel);
     }
 
-    // non-private for testing purposes
     void checkTreeInvariants() {
         try {
             checkTreeInvariants_();
@@ -865,14 +885,6 @@ public class RBTree {
         return black_length;
     }
 
-    private Direction oppositeDirection(Direction direction) {
-        if (direction == Direction.Left) {
-            return Direction.Right;
-        } else {
-            return Direction.Left;
-        }
-    }
-
     private class RBNode {
 
         public RBNode parent;
@@ -887,7 +899,6 @@ public class RBTree {
             this.left = left;
             this.right = right;
             this.color = color;
-            this.key = key;
             this.item = item;
         }
 
@@ -993,8 +1004,6 @@ public class RBTree {
 
         @Override
         public String toString() {
-//            String color_string = (color == Color.Black) ? "B" : "R";
-//            return String.format("%s-%d:%s", color_string, key, item);
             if (this == nil) {
                 return "nil";
             }
