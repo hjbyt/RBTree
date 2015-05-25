@@ -159,8 +159,7 @@ public class RBTree {
                 toFix.parent.parent.color = Color.Red;
                 colorSwitchCount += 3;
                 toFix = toFix.parent.parent;
-            }
-            else {
+            } else {
                 if (toFix.relationToParent() == opposite) {
                     toFix = toFix.parent;
                     toFix.rotate(direction);
@@ -259,7 +258,7 @@ public class RBTree {
             x = node.left;
             node.transplant(x);
         } else {
-            // swap and delete predecessor;
+            // swap and delete successor;
             y = subtreeMin(node.right);
             assert y != null;
             y_original_color = y.color;
@@ -517,12 +516,21 @@ public class RBTree {
         return select(index).key;
     }
 
+    void printTreeMinimal() {
+        printTree(System.out, false, nil);
+    }
+
     void printTree() {
         printTree(System.out);
     }
 
     void printTree(PrintStream stream) {
-        rootDummy.printTree(stream);
+        printTree(stream, true, null);
+    }
+
+    void printTree(PrintStream stream, boolean printRootDummy, RBNode sentinel) {
+        RBNode start = printRootDummy ? rootDummy : root();
+        start.printTree(stream, sentinel);
     }
 
     // non-private for testing purposes
@@ -699,22 +707,20 @@ public class RBTree {
 
         @Override
         public String toString() {
-            String color_string = (color == Color.Black) ? "B" : "R";
-            return String.format("%s-%d:%s", color_string, key, item);
+//            String color_string = (color == Color.Black) ? "B" : "R";
+//            return String.format("%s-%d:%s", color_string, key, item);
+            return color == Color.Red ? String.format("<%d>", key) : "" + key;
         }
 
         //Printing adapted from http://stackoverflow.com/a/19484210
-        public void printTree() {
-            printTree(System.out);
-        }
 
-        public void printTree(PrintStream out) {
-            if (right != null) {
-                right.printTree(out, true, "");
+        public void printTree(PrintStream out, RBNode sentinel) {
+            if (right != sentinel) {
+                right.printTree(out, sentinel, true, "");
             }
             printNodeValue(out);
-            if (left != null) {
-                left.printTree(out, false, "");
+            if (left != sentinel) {
+                left.printTree(out, sentinel, false, "");
             }
         }
 
@@ -722,9 +728,9 @@ public class RBTree {
             out.print(toString() + '\n');
         }
 
-        private void printTree(PrintStream out, boolean isRight, String indent) {
-            if (right != null) {
-                right.printTree(out, true, indent + (isRight ? "        " : " |      "));
+        private void printTree(PrintStream out, RBNode sentinel, boolean isRight, String indent) {
+            if (right != sentinel) {
+                right.printTree(out, sentinel, true, indent + (isRight ? "        " : " |      "));
             }
             out.print(indent);
             if (isRight) {
@@ -734,8 +740,8 @@ public class RBTree {
             }
             out.print("----- ");
             out.print(toString() + '\n');
-            if (left != null) {
-                left.printTree(out, false, indent + (isRight ? " |      " : "        "));
+            if (left != sentinel) {
+                left.printTree(out, sentinel, false, indent + (isRight ? " |      " : "        "));
             }
         }
     }

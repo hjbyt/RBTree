@@ -250,9 +250,10 @@ public class RBTreeTest {
         insert(tree, 2);
         tree.checkTreeInvariants();
 
-        tree.printTree();
+        tree.printTreeMinimal();
+        System.out.println("******************");
 
-        tree.delete(3);
+        tree.delete(4);
         tree.checkTreeInvariants();
     }
 
