@@ -155,6 +155,8 @@ public class RBTreeTest {
 
             assertArrayEquals(mapKeysArray, rbKeys);
         }
+        RBTree tree = new RBTree();
+        assertArrayEquals(new int[0], tree.keysToArray());
     }
 
     @Test
@@ -181,6 +183,8 @@ public class RBTreeTest {
 
             assertArrayEquals(mapValuesArray, rbValues);
         }
+        RBTree tree = new RBTree();
+        assertArrayEquals(new String[0], tree.valuesToArray());
     }
 
     @Test

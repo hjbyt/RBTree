@@ -508,7 +508,7 @@ public class RBTree {
      * Works at O(logn) where n is the number of nodes in the tree
      * precondition: node != maxNode
      * @param node The node who's successor we want to find
-     * @return The node with the next smallest key value
+     * @return The node with the smalles key value which is still bigger than the current
      */
     private RBNode successor(RBNode node) {
         assert node != maxNode;
@@ -522,6 +522,15 @@ public class RBTree {
         }
     }
 
+    /**
+     * private RBNode predecessor(RBNode node)
+     * <p>
+     * Finds the predecessor to a node in the tree.
+     * Works at O(logn) where n is the number of nodes in the tree
+     * precondition: node != minNode
+     * @param node The node who's predecessor we want to find
+     * @return The node with the biggest key value which is still smaller than the current
+     */
     private RBNode predecessor(RBNode node) {
         assert node != minNode;
         if (node.left != nil) {
@@ -534,6 +543,15 @@ public class RBTree {
         }
     }
 
+    /**
+     * private RBNode subtreeMin(RBNode node)
+     * <p>
+     * Finds the smallest value in the current subtree
+     * Works at O(logn) where n is the number of nodes in the sub-tree
+     * precondition: node != null
+     * @param node The head of the sub-tree on which to look for the minimum key
+     * @return The node with the smallest key in the subtree
+     */
     private RBNode subtreeMin(RBNode node) {
         if (node == nil) {
             return null;
@@ -544,6 +562,15 @@ public class RBTree {
         return node;
     }
 
+    /**
+     * private RBNode subtreeMax(RBNode node)
+     * <p>
+     * Finds the biggest value in the current subtree
+     * Works at O(logn) where n is the number of nodes in the sub-tree
+     * precondition: node != null
+     * @param node The head of the sub-tree on which to look for the maximum key
+     * @return The node with the biggest key in the subtree
+     */
     private RBNode subtreeMax(RBNode node) {
         if (node == nil) {
             return null;
@@ -554,6 +581,13 @@ public class RBTree {
         return node;
     }
 
+    /**
+     * private RBNode root()
+     * <p>
+     * Returns the actual root of the tree (not the dummy root)
+     * Works at O(1)
+     * @return The real root node of the tree
+     */
     private RBNode root() {
         return rootDummy.left;
     }
@@ -563,6 +597,8 @@ public class RBTree {
      * <p>
      * Returns the value of the item with the smallest key in the tree,
      * or null if the tree is empty
+     * Works at O(1)
+     * @return The value for the node with the minimum key in the tree, or null if the tree is empty
      */
     public String min() {
         if (minNode == null) {
@@ -576,6 +612,8 @@ public class RBTree {
      * <p>
      * Returns the value of the item with the largest key in the tree,
      * or null if the tree is empty
+     * Works at O(1)
+     * @return The value for the node with the maximum key in the tree, or null if the tree is empty
      */
     public String max() {
         if (minNode == null) {
@@ -584,47 +622,86 @@ public class RBTree {
         return maxNode.item;
     }
 
-    int minKey() {
-        if (minNode == null) {
-            return 0;
-        }
-        return minNode.key;
-    }
-
-    int maxKey() {
-        if (maxNode == null) {
-            return 0;
-        }
-        return minNode.key;
-    }
-
+    /**
+     * private class IndexedConsumer<T> implements Consumer<T>
+     * <p>
+     * Turns a Consumer<T> into a Consumer<T, Integer> where the int is a running counter
+     */
     private class IndexedConsumer<T> implements Consumer<T> {
+
         int index;
         BiConsumer<T, Integer> base;
 
+        /**
+         * public IndexedConsumer(BiConsumer<T, Integer> baseFunction)
+         * <p>
+         * Constructor for the class
+         * @param baseFunction - The function to call each time we are called by the previous Consumer<T>
+         */
         public IndexedConsumer(BiConsumer<T, Integer> baseFunction) {
             index = 0;
             base = baseFunction;
         }
 
+        /**
+         * public void accept(T arg)
+         * <p>
+         * Implements the Consumer<T> interface. Get called each time a new value is ready to be consumed,
+         * passes it to the baseFunction together with the calling index
+         * @param arg The value to consume
+         */
         public void accept(T arg) {
             base.accept(arg, index);
             index++;
         }
     }
 
+    /**
+     * private void walkPreOrder(RBNode node, Consumer<RBNode> consumer)
+     * <p>
+     * Applies the given function to all the nodes in the tree in pre-order
+     * Works in O(n) where n is the number of nodes in the sub-tree under node
+     * @param node The node to start the tree-walk from
+     * @param consumer The function to run on each node
+     */
     private void walkPreOrder(RBNode node, Consumer<RBNode> consumer) {
         walk(node, consumer, dummyConsumer, dummyConsumer);
     }
 
+    /**
+     * private void walkInOrder(RBNode node, Consumer<RBNode> consumer)
+     * <p>
+     * Applies the given function to all the nodes in the tree in order
+     * Works in O(n) where n is the number of nodes in the sub-tree under node
+     * @param node The node to start the tree-walk from
+     * @param consumer The function to run on each node
+     */
     private void walkInOrder(RBNode node, Consumer<RBNode> consumer) {
         walk(node, dummyConsumer, consumer, dummyConsumer);
     }
 
+    /**
+     * private void walkPostOrder(RBNode node, Consumer<RBNode> consumer)
+     * <p>
+     * Applies the given function to all the nodes in the tree in post-order
+     * Works in O(n) where n is the number of nodes in the sub-tree under node
+     * @param node The node to start the tree-walk from
+     * @param consumer The function to run on each node
+     */
     private void walkPostOrder(RBNode node, Consumer<RBNode> consumer) {
         walk(node, dummyConsumer, dummyConsumer, consumer);
     }
 
+    /**
+     * private void walk(RBNode node, Consumer<RBNode> consumerPre, Consumer<RBNode> consumerIn, Consumer<RBNode> consumerPost)
+     * <p>
+     * Walks the given subtree and applies the given functions in pre, post and in-order fashions
+     * Works in O(n) where n is the number of nodes in the sub-tree under node
+     * @param node The node to start the tree-walk from
+     * @param consumerPre The function to run on nodes in pre-order
+     * @param consumerIn The function to run on nodes in-order
+     * @param consumerPost The function to run on nodes in post-order
+     */
     private void walk(RBNode node, Consumer<RBNode> consumerPre, Consumer<RBNode> consumerIn, Consumer<RBNode> consumerPost) {
         if (node == nil) {
             return;
@@ -641,6 +718,7 @@ public class RBTree {
      * <p>
      * Returns a sorted array which contains all keys in the tree,
      * or an empty array if the tree is empty.
+     * @return All the keys for all the nodes in the tree
      */
     public int[] keysToArray() {
         int[] keys = new int[size];
@@ -654,6 +732,7 @@ public class RBTree {
      * Returns an array which contains all values in the tree,
      * sorted by their respective keys,
      * or an empty array if the tree is empty.
+     * @return All the values for all the nodes in the tree
      */
     public String[] valuesToArray() {
         String[] items = new String[size];
@@ -668,6 +747,7 @@ public class RBTree {
      * <p>
      * precondition: none
      * postcondition: none
+     * @return The number of elements in the tree
      */
     public int size() {
         return size;
@@ -710,6 +790,20 @@ public class RBTree {
             printTree();
             throw throwable;
         }
+    }
+
+    int minKey() {
+        if (minNode == null) {
+            return 0;
+        }
+        return minNode.key;
+    }
+
+    int maxKey() {
+        if (maxNode == null) {
+            return 0;
+        }
+        return minNode.key;
     }
 
     private void checkTreeInvariants_() {
