@@ -899,6 +899,7 @@ public class RBTree {
             this.left = left;
             this.right = right;
             this.color = color;
+            this.key = key;
             this.item = item;
         }
 
