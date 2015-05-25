@@ -911,14 +911,14 @@ public class RBTree {
 
     private class RBNode {
 
-        public RBNode parent;
-        public RBNode left;
-        public RBNode right;
-        public Color color;
-        public int key;
-        public String item;
+        RBNode parent;
+        RBNode left;
+        RBNode right;
+        Color color;
+        int key;
+        String item;
 
-        public RBNode(RBNode parent, RBNode left, RBNode right, Color color, int key, String item) {
+        RBNode(RBNode parent, RBNode left, RBNode right, Color color, int key, String item) {
             this.parent = parent;
             this.left = left;
             this.right = right;
@@ -927,7 +927,7 @@ public class RBTree {
             this.item = item;
         }
 
-        public RBNode getChild(Direction direction) {
+        RBNode getChild(Direction direction) {
             if (direction == Direction.Left) {
                 return left;
             } else {
@@ -935,7 +935,7 @@ public class RBTree {
             }
         }
 
-        public void setChild(Direction direction, RBNode node) {
+        void setChild(Direction direction, RBNode node) {
             if (direction == Direction.Left) {
                 setLeft(node);
             } else {
@@ -943,7 +943,7 @@ public class RBTree {
             }
         }
 
-        public void rotate(Direction direction) {
+        void rotate(Direction direction) {
             if (direction == Direction.Left) {
                 rotateLeft();
             } else {
@@ -951,83 +951,83 @@ public class RBTree {
             }
         }
 
-        public void setLeft(RBNode node) {
+        void setLeft(RBNode node) {
             left = node;
             node.parent = this;
         }
 
-        public void setRight(RBNode node) {
+        void setRight(RBNode node) {
             right = node;
             node.parent = this;
         }
 
         // Replace this node with another node and it's subtrees
-        public void transplant(RBNode node) {
+        void transplant(RBNode node) {
             parent.setChild(relationToParent(), node);
         }
 
         // Replace this node with another node, keeping this node's subtrees.
-        public void replace(RBNode node) {
+        void replace(RBNode node) {
             transplant(node);
             node.setLeft(left);
             node.setRight(right);
         }
 
-        public void rotateLeft() {
+        void rotateLeft() {
             RBNode oldRight = right;
             transplant(oldRight);
             setRight(oldRight.left);
             oldRight.setLeft(this);
         }
 
-        public void rotateRight() {
+        void rotateRight() {
             RBNode oldLeft = left;
             transplant(oldLeft);
             setLeft(oldLeft.right);
             oldLeft.setRight(this);
         }
 
-        public boolean isRightChild() {
+        boolean isRightChild() {
             return parent.right == this;
         }
 
-        public boolean isLeftChild() {
+        boolean isLeftChild() {
             return parent.left == this;
         }
 
-        public Direction relationToParent() {
+        Direction relationToParent() {
             return isLeftChild() ? Direction.Left : Direction.Right;
         }
 
-        public RBNode getBrother() {
+        RBNode getBrother() {
             Direction direction = relationToParent();
             return parent.getChild(oppositeDirection(direction));
         }
 
-        public RBNode getNephewNear() {
+        RBNode getNephewNear() {
             return getBrother().getChild(relationToParent());
         }
 
-        public RBNode getNephewFar() {
+        RBNode getNephewFar() {
             return getBrother().getChild(oppositeDirection(relationToParent()));
         }
 
-        public int childrenCount() {
+        int childrenCount() {
             int count = 0;
             if (hasLeftChild()) count += 1;
             if (hasRightChild()) count += 1;
             return count;
         }
 
-        public boolean hasChildren() {
+        boolean hasChildren() {
             return childrenCount() > 0;
         }
 
-        public boolean hasLeftChild() {
+        boolean hasLeftChild() {
             return left != nil;
         }
 
-        public boolean hasRightChild() {
+        boolean hasRightChild() {
             return right != nil;
         }
 
@@ -1042,23 +1042,18 @@ public class RBTree {
             return color == Color.Red ? String.format("<%d>", key) : "" + key;
         }
 
-        //Printing adapted from http://stackoverflow.com/a/19484210
-
-        public void printTree(PrintStream out, RBNode sentinel) {
+        // Printing adapted from http://stackoverflow.com/a/19484210
+        void printTree(PrintStream out, RBNode sentinel) {
             if (right != sentinel) {
                 right.printTree(out, sentinel, true, "");
             }
-            printNodeValue(out);
+            out.println(toString());
             if (left != sentinel) {
                 left.printTree(out, sentinel, false, "");
             }
         }
 
-        private void printNodeValue(PrintStream out) {
-            out.print(toString() + '\n');
-        }
-
-        private void printTree(PrintStream out, RBNode sentinel, boolean isRight, String indent) {
+        void printTree(PrintStream out, RBNode sentinel, boolean isRight, String indent) {
             if (right != sentinel) {
                 right.printTree(out, sentinel, true, indent + (isRight ? "        " : " |      "));
             }
@@ -1069,7 +1064,7 @@ public class RBTree {
                 out.print(" \\");
             }
             out.print("----- ");
-            out.print(toString() + '\n');
+            out.println(toString());
             if (left != sentinel) {
                 left.printTree(out, sentinel, false, indent + (isRight ? " |      " : "        "));
             }
