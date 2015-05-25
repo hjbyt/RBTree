@@ -219,6 +219,23 @@ public class RBTreeTest {
     }
 
     @Test
+    public void testInsertAndDeleteMaxInt() throws Exception {
+        for (MapPair pair : maps) {
+            int k = Integer.MAX_VALUE;
+            String s = "" + k;
+            pair.map.put(k, s);
+            pair.rb.insert(k, s);
+            compareAndCheck(pair.map, pair.rb);
+
+            pair.map.remove(k);
+            assertThat(pair.rb.delete(k), not(-1));
+            compareAndCheck(pair.map, pair.rb);
+
+            assertThat(pair.rb.delete(k), is(-1));
+        }
+    }
+
+    @Test
     public void testFuzz() throws Exception {
         final int VALUES_RANGE = 4000;
         SortedMap<Integer, String> map = map0;
