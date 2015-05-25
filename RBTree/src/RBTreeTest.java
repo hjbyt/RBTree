@@ -158,6 +158,20 @@ public class RBTreeTest {
     }
 
     @Test
+    public void simple() throws Exception {
+        RBTree tree = new RBTree();
+        tree.insert(4160, "1");
+        tree.checkTreeInvariants();
+        tree.insert(458, "2");
+        tree.checkTreeInvariants();
+        tree.insert(9356, "3");
+        tree.checkTreeInvariants();
+        tree.insert(8400, "4");
+        tree.checkTreeInvariants();
+        //tree.printTree();
+    }
+
+    @Test
     public void testValuesToArray() throws Exception {
         for (MapPair pair : maps) {
             List<String> mapValues = new ArrayList<>(pair.map.values());

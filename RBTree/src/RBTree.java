@@ -150,7 +150,7 @@ public class RBTree {
     private int insertFixup(RBNode toFix) {
         int colorSwitchCount = 0;
         while (toFix != nil && toFix != root() && toFix != rootDummy && toFix.parent.color == Color.Red) {
-            Direction direction = toFix.relationToParent();
+            Direction direction = toFix.parent.relationToParent();
             Direction opposite = oppositeDirection(direction);
             RBNode uncle = toFix.parent.parent.getChild(opposite);
             if (uncle.color == Color.Red) {
