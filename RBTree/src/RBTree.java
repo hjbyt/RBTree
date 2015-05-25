@@ -344,7 +344,8 @@ public class RBTree {
         while (node.parent.color == Color.Red) {
             Direction direction = node.parent.relationToParent();
             Direction opposite = oppositeDirection(direction);
-            RBNode uncle = node.parent.parent.getChild(opposite);
+
+            RBNode uncle = node.getUncle();
             if (uncle.color == Color.Red) {
                 node.parent.color = Color.Black;
                 uncle.color = Color.Black;
@@ -1004,6 +1005,10 @@ public class RBTree {
 
         RBNode getNephewFar() {
             return getBrother().getChild(oppositeDirection(relationToParent()));
+        }
+
+        RBNode getUncle() {
+            return parent.getBrother();
         }
 
         int childrenCount() {
