@@ -53,46 +53,6 @@ public class RBTreeTest {
 
     }
 
-    //TODO XXX
-//    @Test
-//    public void testRotate() throws Exception {
-//        RBTree.RBNode node = new RBTree.RBNode(null, null, null, RBTree.Color.Black, 5, "5");
-//        RBTree t = new RBTree();
-//        t.insert(50, "50");
-//        t.insert(100, "100");
-//        t.insert(20, "20");
-//        t.insert(10, "10");
-//        t.insert(5, "5");
-//        //t.printTree();
-//        t.rootDummy.printTree();
-//
-//        System.out.println("***************************");
-//
-//        t.root().rotateRight();
-//        t.rootDummy.printTree();
-//
-//        System.out.println("***************************");
-//
-//        t.root().rotateLeft();
-//        t.rootDummy.printTree();
-//
-//        System.out.println("***************************");
-//        System.out.println(t.root().left.left);
-//        System.out.println("***************************");
-//
-//        t.root().left.left.rotateRight();
-//
-//        t.root().printTree();
-//
-//        System.out.println("***************************");
-//        System.out.println(t.root().left.left);
-//        System.out.println("***************************");
-//
-//        t.root().left.left.rotateLeft();
-//
-//        t.root().printTree();
-//    }
-
     @Test
     public void testEmpty() throws Exception {
         for (MapPair pair : maps) {

@@ -302,75 +302,6 @@ public class RBTree {
         return 0;
     }
 
-//    private int deleteFixup(RBNode x) {
-//        int color_switches = 0;
-//
-//        RBNode w;
-//        while (x != root() && x.color == Color.Black) {
-//            if (x == x.parent.left) {
-//                w = x.parent.right;
-//                if (w.color == Color.Red) {
-//                    w.color = Color.Black;
-//                    x.parent.color = Color.Red;
-//                    color_switches += 2;
-//                    x.parent.rotateLeft();
-//                    w = x.parent.right;
-//                }
-//                if (w.left.color == Color.Black && w.right.color == Color.Black) {
-//                    w.color = Color.Red;
-//                    color_switches += 1;
-//                    x = x.parent;
-//                } else {
-//                    if (w.right.color == Color.Black) {
-//                        w.left.color = Color.Black;
-//                        w.color = Color.Red;
-//                        color_switches += 2;
-//                        w.rotateRight();
-//                        w = x.parent.right;
-//                    }
-//                    w.color = x.parent.color;
-//                    x.parent.color = Color.Black;
-//                    w.right.color = Color.Black;
-//                    color_switches += 3;
-//                    x.parent.rotateLeft();
-//                    x = root();
-//                }
-//            } else {
-//                w = x.parent.left;
-//                if (w.color == Color.Red) {
-//                    w.color = Color.Black;
-//                    x.parent.color = Color.Red;
-//                    color_switches += 2;
-//                    x.parent.rotateRight();
-//                    w = x.parent.left;
-//                }
-//                if (w.right.color == Color.Black && w.left.color == Color.Black) {
-//                    w.color = Color.Red;
-//                    color_switches += 1;
-//                    x = x.parent;
-//                } else {
-//                    if (w.left.color == Color.Black) {
-//                        w.right.color = Color.Black;
-//                        w.color = Color.Red;
-//                        color_switches += 2;
-//                        w.rotateLeft();
-//                        w = x.parent.left;
-//                    }
-//                    w.color = x.parent.color;
-//                    x.parent.color = Color.Black;
-//                    w.left.color = Color.Black;
-//                    color_switches += 3;
-//                    x.parent.rotateRight();
-//                    x = root();
-//                }
-//            }
-//        }
-//        x.color = Color.Black;
-//        color_switches += 1;
-//
-//        return color_switches;
-//    }
-
     private int deleteFixup(RBNode x) {
         int color_switches = 0;
 
@@ -409,7 +340,6 @@ public class RBTree {
         }
         x.color = Color.Black;
         color_switches += 1;
-
 
         return color_switches;
     }
