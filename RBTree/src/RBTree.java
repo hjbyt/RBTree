@@ -300,8 +300,7 @@ public class RBTree {
                 toFix.parent.parent.color = Color.Red;
                 colorSwitchCount += 3;
                 toFix = toFix.parent.parent;
-            }
-            else {
+            } else {
                 if (toFix.relationToParent() == opposite) {
                     toFix = toFix.parent;
                     toFix.rotate(direction);
@@ -409,37 +408,51 @@ public class RBTree {
         RBNode y = node;
         Color y_original_color = y.color;
 
-        RBNode x;
-        if (node.left == nil) {
-            x = node.right;
-            node.transplant(x);
-        } else if (node.right == nil) {
-            x = node.left;
-            node.transplant(x);
-        } else {
-            // swap and delete predecessor;
-            y = subtreeMin(node.right);
-            assert y != null;
-            y_original_color = y.color;
-            x = y.right;
-            if (y.parent == node) {
-                x.parent = y;
-            } else {
-                y.transplant(y.right);
-                y.right = node.right;
-                y.right.parent = y;
+    private int deleteNode(RBNode p) {
+        int color_switches = 0;
+
+        // If has both children
+        if (p.left != nil && p.right != nil) {
+            RBNode s = successor(p);
+            if (s == maxNode) {
+                maxNode = p;
             }
-            node.transplant(y);
-            y.left = node.left;
-            y.left.parent = y;
-            y.color = node.color;
+            p.key = s.key;
+            p.item = s.item;
+            p = s;
         }
 
-        if (y_original_color == Color.Black) {
-            return deleteFixup(x);
+        RBNode replacement = p.left != nil ? p.left : p.right;
+
+        // if has children
+        if (replacement != nil) {
+            replacement.parent = p.parent;
+            if (p == p.parent.left) {
+                p.parent.left = replacement;
+            } else {
+                p.parent.right = replacement;
+            }
+
+            p.left = p.right = p.parent = nil;
+
+            if (p.color == Color.Black) {
+                color_switches = deleteFixup(replacement);
+            }
+        } else {
+            // no children
+            if (p.color == Color.Black) {
+                color_switches = deleteFixup(p);
+            }
+
+            if (p == p.parent.left) {
+                p.parent.left = nil;
+            } else if (p == p.parent.right) {
+                p.parent.right = nil;
+            }
+            p.parent = nil;
         }
 
-        return 0;
+        return color_switches;
     }
 
     /**
@@ -676,12 +689,21 @@ public class RBTree {
         return select(index).key;
     }
 
+    void printTreeMinimal() {
+        printTree(System.out, false, nil);
+    }
+
     void printTree() {
         printTree(System.out);
     }
 
     void printTree(PrintStream stream) {
-        rootDummy.printTree(stream);
+        printTree(stream, true, null);
+    }
+
+    void printTree(PrintStream stream, boolean printRootDummy, RBNode sentinel) {
+        RBNode start = printRootDummy ? rootDummy : root();
+        start.printTree(stream, sentinel);
     }
 
     // non-private for testing purposes
@@ -709,8 +731,10 @@ public class RBTree {
 
         TreeMap<Integer, String> map = toTreeMap();
         assert map.size() == size() : "Incorrect size";
-        assert subtreeMin(root()) == minNode : String.format("Incorrect minNode: %s != %s", subtreeMin(root()), minNode);
-        assert subtreeMax(root()) == maxNode : "Incorrect maxNode";
+        RBNode min = subtreeMin(root());
+        RBNode max = subtreeMax(root());
+        assert min == minNode : String.format("Incorrect minNode: %s != %s", min, minNode);
+        assert max == maxNode : String.format("Incorrect minNode: %s != %s", max, maxNode);
     }
 
     // Returns the node black height
@@ -858,22 +882,26 @@ public class RBTree {
 
         @Override
         public String toString() {
-            String color_string = (color == Color.Black) ? "B" : "R";
-            return String.format("%s-%d:%s", color_string, key, item);
+//            String color_string = (color == Color.Black) ? "B" : "R";
+//            return String.format("%s-%d:%s", color_string, key, item);
+            if (this == nil) {
+                return "nil";
+            }
+            if (this == rootDummy) {
+                return "rootDummy";
+            }
+            return color == Color.Red ? String.format("<%d>", key) : "" + key;
         }
 
         //Printing adapted from http://stackoverflow.com/a/19484210
-        public void printTree() {
-            printTree(System.out);
-        }
 
-        public void printTree(PrintStream out) {
-            if (right != null) {
-                right.printTree(out, true, "");
+        public void printTree(PrintStream out, RBNode sentinel) {
+            if (right != sentinel) {
+                right.printTree(out, sentinel, true, "");
             }
             printNodeValue(out);
-            if (left != null) {
-                left.printTree(out, false, "");
+            if (left != sentinel) {
+                left.printTree(out, sentinel, false, "");
             }
         }
 
@@ -881,9 +909,9 @@ public class RBTree {
             out.print(toString() + '\n');
         }
 
-        private void printTree(PrintStream out, boolean isRight, String indent) {
-            if (right != null) {
-                right.printTree(out, true, indent + (isRight ? "        " : " |      "));
+        private void printTree(PrintStream out, RBNode sentinel, boolean isRight, String indent) {
+            if (right != sentinel) {
+                right.printTree(out, sentinel, true, indent + (isRight ? "        " : " |      "));
             }
             out.print(indent);
             if (isRight) {
@@ -893,8 +921,8 @@ public class RBTree {
             }
             out.print("----- ");
             out.print(toString() + '\n');
-            if (left != null) {
-                left.printTree(out, false, indent + (isRight ? " |      " : "        "));
+            if (left != sentinel) {
+                left.printTree(out, sentinel, false, indent + (isRight ? " |      " : "        "));
             }
         }
     }
