@@ -211,7 +211,7 @@ public class RBTreeTest {
             numbers.add(i);
         }
         Collections.shuffle(numbers);
-        int[] randomized = new int [list_length];
+        int[] randomized = new int[list_length];
         for (int i = 0; i < numbers.size(); i++) {
             randomized[i] = numbers.get(i);
         }
@@ -220,20 +220,21 @@ public class RBTreeTest {
 
     @Test
     public void printMeasurements() throws Exception {
-        for (int i = 1; i <= 10; i++) {
-            RBTree tree = new RBTree();
-            int[] numbers_to_insert = getRandomNumbers(i * 10000);
-            int color_changes = 0;
-            for (int number : numbers_to_insert) {
-                color_changes += tree.insert(number, Integer.toString(number));
-            }
-            System.out.println(Integer.toString(i) + " : " + Integer.toString(color_changes));
-        }
+        //TODO XXX
+//        for (int i = 1; i <= 10; i++) {
+//            RBTree tree = new RBTree();
+//            int[] numbers_to_insert = getRandomNumbers(i * 10000);
+//            int color_changes = 0;
+//            for (int number : numbers_to_insert) {
+//                color_changes += tree.insert(number, Integer.toString(number));
+//            }
+//            System.out.println(Integer.toString(i) + " : " + Integer.toString(color_changes));
+//        }
     }
 
     @Test
     public void deleteSpecialCase() {
-            RBTree tree = new RBTree();
+        RBTree tree = new RBTree();
         insert(tree, 1);
         tree.checkTreeInvariants();
         insert(tree, 4);
