@@ -477,13 +477,16 @@ public class RBTree {
                 assert node.getBrother().color == Color.Black;
                 // Note: now node's brother is surely black, and we will get to case 2/3/4.
             } else if (node.getNephewNear().color == Color.Black && node.getNephewFar().color == Color.Black) {
-                // Case 2
+                // Case 2: node's brother is black, and both nephews are black
+                // Set brother's color to red, to make the black-height of node and brother the same.
                 brother.color = Color.Red;
                 color_switches += 1;
                 node = node.parent;
+                // Now if the parent is black, we move the issue to the parent.
+                // If it is red, then the loop terminates, and it will be made black afterwards, and the fixing is over.
             } else {
                 // Case 3
-                if (node.getNephewFar().color == Color.Black) {
+                if (node.getNephewNear().color == Color.Red) {
                     node.getNephewNear().color = Color.Black;
                     brother.color = Color.Red;
                     color_switches += 2;
@@ -499,8 +502,10 @@ public class RBTree {
                 node = root();
             }
         }
-        node.color = Color.Black;
-        color_switches += 1;
+        if (node.color == Color.Red) {
+            node.color = Color.Black;
+            color_switches += 1;
+        }
 
         return color_switches;
     }
