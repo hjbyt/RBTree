@@ -963,11 +963,7 @@ public class RBTree {
 
         // Replace this node with another node and it's subtrees
         public void transplant(RBNode node) {
-            if (this == parent.left) {
-                parent.setLeft(node);
-            } else {
-                parent.setRight(node);
-            }
+            parent.setChild(relationToParent(), node);
         }
 
         // Replace this node with another node, keeping this node's subtrees.
