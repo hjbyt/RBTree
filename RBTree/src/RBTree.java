@@ -284,6 +284,7 @@ public class RBTree {
      * private int insertFixup(RBNode toFix)
      * <p>
      * Fixes the tree to retain it's red-black properties after a node was inserted
+     * TODO - Add O()
      * @param toFix The node from which to start the fix
      * @return The number of color changes made to nodes in order to maintain the red-black property
      */
@@ -325,6 +326,10 @@ public class RBTree {
      * the tree must remain valid (keep its invariants).
      * returns the number of color switches, or 0 if no color switches were necessary.
      * returns -1 if an item with key k already exists in the tree.
+     * TODO - Add O()
+     * @param k The key of the new node to insert into the tree
+     * @param v The new value to insert into the tree
+     * @return The number of node-color changes that happened during the insert, or -1 if an error occurs
      */
     public int insert(int k, String v) {
         RBNode parent = getPositionByKey(k);
@@ -368,6 +373,9 @@ public class RBTree {
      * the tree must remain valid (keep its invariants).
      * returns the number of color switches, or 0 if no color switches were needed.
      * returns -1 if an item with key k was not found in the tree.
+     * TODO - Add O()
+     * @param k The key who's node we want to delete
+     * @return The number of node-color changes that happened during the insert, or -1 if an error occurs
      */
     public int delete(int k) {
         RBNode node = searchNode(k);
@@ -389,6 +397,14 @@ public class RBTree {
         return deleteNode(node);
     }
 
+    /**
+     * private int deleteNode(RBNode node)
+     * <p>
+     * Deletes a node from the RBTree
+     * * TODO - Add O()
+     * @param x The node to delete
+     * @return The number of node-color changes that happened during the delete
+     */
     private int deleteNode(RBNode node) {
         RBNode y = node;
         Color y_original_color = y.color;
@@ -426,6 +442,14 @@ public class RBTree {
         return 0;
     }
 
+    /**
+     * private int deleteFixup(RBNode x)
+     * <p>
+     * Fixes the red-black tree to maintain it's red-black properties after a node was deleted
+     * TODO - Add O()
+     * @param x The node from which to start the fixup-process
+     * @return The number of node-color changes that happened during the delete
+     */
     private int deleteFixup(RBNode x) {
         int color_switches = 0;
 
@@ -468,6 +492,15 @@ public class RBTree {
         return color_switches;
     }
 
+    /**
+     * private RBNode successor(RBNode node)
+     * <p>
+     * Finds the successor to a node in the tree.
+     * Works at O(logn) where n is the number of nodes in the tree
+     * precondition: node != maxNode
+     * @param node The node who's successor we want to find
+     * @return The node with the next smallest key value
+     */
     private RBNode successor(RBNode node) {
         assert node != maxNode;
         if (node.right != nil) {
