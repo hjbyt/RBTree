@@ -4,7 +4,6 @@ import java.util.TreeMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-//TODO: decide which methods should be in RBNode and which shouldn't.
 // e.g. should hasLeftChild say in RBNode (it references nil, which is outside of it)
 // and should successor/predecessor be in RBNode?
 // or maybe should RBNode be agnostic to the order of node, which is imposed by the tree...
@@ -42,14 +41,12 @@ public class RBTree {
     public RBTree() {
         // Create dummy node
         rootDummy = new RBNode(Color.Black);
-        //TODO: should we do something different?
-        //      because if a key with this value is inserted/deleted it would be an error.
+        //TODO: should we do something different? Because if a key with this value is inserted/deleted it would be an error.
         rootDummy.key = Integer.MAX_VALUE;
         rootDummy.parent = rootDummy;
 
         nil = new RBNode(Color.Black);
         nil.parent = rootDummy;
-        //TODO: should nil's children be null?
         nil.left = null;
         nil.right = null;
         rootDummy.left = nil;
@@ -148,21 +145,6 @@ public class RBTree {
         }
     }
 
-    /*
-    RBNode w;
-        while (x != root() && x.color == Color.Black) {
-            Direction direction = x == x.parent.left ? Direction.Left : Direction.Right;
-            Direction opposite = oppositeDirection(direction);
-
-            w = x.parent.getChild(opposite);
-            if (w.color == Color.Red) {
-                w.color = Color.Black;
-                x.parent.color = Color.Red;
-                color_switches += 2;
-                x.parent.rotate(direction);
-                w = x.parent.getChild(opposite);
-     */
-
     private int insertFixup(RBNode toFix) {
         int colorSwitchCount = 0;
         while (toFix != nil && toFix != root() && toFix != rootDummy && toFix.parent.color == Color.Red) {
@@ -249,7 +231,6 @@ public class RBTree {
             return -1;
         }
 
-        //TODO: make sure these don't affect runtime complexity of delete
         if (size == 1) {
             minNode = null;
             maxNode = null;
@@ -299,75 +280,6 @@ public class RBTree {
 
         return 0;
     }
-
-//    private int deleteFixup(RBNode x) {
-//        int color_switches = 0;
-//
-//        RBNode w;
-//        while (x != root() && x.color == Color.Black) {
-//            if (x == x.parent.left) {
-//                w = x.parent.right;
-//                if (w.color == Color.Red) {
-//                    w.color = Color.Black;
-//                    x.parent.color = Color.Red;
-//                    color_switches += 2;
-//                    x.parent.rotateLeft();
-//                    w = x.parent.right;
-//                }
-//                if (w.left.color == Color.Black && w.right.color == Color.Black) {
-//                    w.color = Color.Red;
-//                    color_switches += 1;
-//                    x = x.parent;
-//                } else {
-//                    if (w.right.color == Color.Black) {
-//                        w.left.color = Color.Black;
-//                        w.color = Color.Red;
-//                        color_switches += 2;
-//                        w.rotateRight();
-//                        w = x.parent.right;
-//                    }
-//                    w.color = x.parent.color;
-//                    x.parent.color = Color.Black;
-//                    w.right.color = Color.Black;
-//                    color_switches += 3;
-//                    x.parent.rotateLeft();
-//                    x = root();
-//                }
-//            } else {
-//                w = x.parent.left;
-//                if (w.color == Color.Red) {
-//                    w.color = Color.Black;
-//                    x.parent.color = Color.Red;
-//                    color_switches += 2;
-//                    x.parent.rotateRight();
-//                    w = x.parent.left;
-//                }
-//                if (w.right.color == Color.Black && w.left.color == Color.Black) {
-//                    w.color = Color.Red;
-//                    color_switches += 1;
-//                    x = x.parent;
-//                } else {
-//                    if (w.left.color == Color.Black) {
-//                        w.right.color = Color.Black;
-//                        w.color = Color.Red;
-//                        color_switches += 2;
-//                        w.rotateLeft();
-//                        w = x.parent.left;
-//                    }
-//                    w.color = x.parent.color;
-//                    x.parent.color = Color.Black;
-//                    w.left.color = Color.Black;
-//                    color_switches += 3;
-//                    x.parent.rotateRight();
-//                    x = root();
-//                }
-//            }
-//        }
-//        x.color = Color.Black;
-//        color_switches += 1;
-//
-//        return color_switches;
-//    }
 
     private int deleteFixup(RBNode x) {
         int color_switches = 0;
@@ -563,26 +475,8 @@ public class RBTree {
         return size;
     }
 
-    //TODO XXX
-//    private class PrintingThrowable extends Throwable {
-//        private RBTree tree;
-//
-//        public PrintingThrowable(Throwable cause, RBTree tree) {
-//            super(cause);
-//            this.tree = tree;
-//        }
-//
-//        @Override
-//        public void printStackTrace(PrintStream s) {
-//            this.tree.printTree(s);
-//            super.printStackTrace(s);
-//        }
-//    }
-
     void printTree() {
         printTree(System.out);
-        //TODO XXX
-        //printTree(System.err);
     }
 
     void printTree(PrintStream stream) {
@@ -596,8 +490,6 @@ public class RBTree {
         } catch (Throwable throwable) {
             printTree();
             throw throwable;
-            //TODO XXX
-//            throw new PrintingThrowable(throwable, this);
         }
     }
 
