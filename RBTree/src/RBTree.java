@@ -444,11 +444,7 @@ public class RBTree {
             }
 
             // Remove node
-            if (node.isLeftChild()) {
-                node.parent.left = nil;
-            } else if (node.isRightChild()) {
-                node.parent.right = nil;
-            }
+            node.parent.setChild(node.relationToParent(), nil);
         }
 
         return color_switches;
