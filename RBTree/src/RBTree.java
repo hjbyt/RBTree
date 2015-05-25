@@ -475,15 +475,15 @@ public class RBTree {
                 node.parent.rotate(direction);
                 brother = node.getBrother();
             }
-            if (brother.getChild(direction).color == Color.Black && brother.getChild(opposite).color == Color.Black) {
+            if (node.getNephewNear().color == Color.Black && node.getNephewFar().color == Color.Black) {
                 // Case 2
                 brother.color = Color.Red;
                 color_switches += 1;
                 node = node.parent;
             } else {
                 // Case 3
-                if (brother.getChild(opposite).color == Color.Black) {
-                    brother.getChild(direction).color = Color.Black;
+                if (node.getNephewFar().color == Color.Black) {
+                    node.getNephewNear().color = Color.Black;
                     brother.color = Color.Red;
                     color_switches += 2;
                     brother.rotate(opposite);
@@ -492,7 +492,7 @@ public class RBTree {
                 // Case 4
                 brother.color = node.parent.color;
                 node.parent.color = Color.Black;
-                brother.getChild(opposite).color = Color.Black;
+                node.getNephewFar().color = Color.Black;
                 color_switches += 3;
                 node.parent.rotate(direction);
                 node = root();
@@ -977,6 +977,14 @@ public class RBTree {
         public RBNode getBrother() {
             Direction direction = relationToParent();
             return parent.getChild(oppositeDirection(direction));
+        }
+
+        public RBNode getNephewNear() {
+            return getBrother().getChild(relationToParent());
+        }
+
+        public RBNode getNephewFar() {
+            return getBrother().getChild(oppositeDirection(relationToParent()));
         }
 
         public int childrenCount() {
