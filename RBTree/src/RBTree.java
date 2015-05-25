@@ -396,7 +396,7 @@ public class RBTree {
             while (node.relationToParent() == Direction.Right) {
                 node = node.parent;
             }
-            return node;
+            return node.parent;
         }
     }
 
@@ -408,7 +408,7 @@ public class RBTree {
             while (node.relationToParent() == Direction.Left) {
                 node = node.parent;
             }
-            return node;
+            return node.parent;
         }
     }
 
