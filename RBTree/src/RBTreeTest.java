@@ -7,8 +7,6 @@ import java.util.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
-//TODO: make a test that randomly inserts and deletes nodes, and checks invariants.
-
 public class RBTreeTest {
 
     Random rand;
