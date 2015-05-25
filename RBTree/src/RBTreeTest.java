@@ -214,28 +214,14 @@ public class RBTreeTest {
         return randomized;
     }
 
-    private void clearTree(RBTree tree, boolean heavy_checks) {
-        for (int key : tree.keysToArray()) {
-            tree.delete(key);
-            tree.printTree();
-            if (heavy_checks) {
-                tree.checkTreeInvariants();
-            }
-        }
-    }
-
     @Test
     public void printMeasurements() throws Exception {
-        boolean heavy_checks = true; // For the final one where we time things we want it to go faster
         for (int i = 1; i <= 10; i++) {
-            int[] numbers_to_insert = getRandomNumbers(i * 10);
-            clearTree(rb1, heavy_checks);
+            RBTree tree = new RBTree();
+            int[] numbers_to_insert = getRandomNumbers(i * 10000);
             int color_changes = 0;
             for (int number : numbers_to_insert) {
-                color_changes += rb1.insert(number, Integer.toString(number));
-                if (heavy_checks) {
-                    rb1.checkTreeInvariants();
-                }
+                color_changes += tree.insert(number, Integer.toString(number));
             }
             System.out.println(Integer.toString(i) + " : " + Integer.toString(color_changes));
         }
