@@ -276,7 +276,8 @@ public class RBTree {
                 } else {
                     return node;
                 }
-            } else { // k > current.key
+            } else {
+                assert k > node.key;
                 if (node.hasRightChild()) {
                     node = node.right;
                 } else {
@@ -529,7 +530,7 @@ public class RBTree {
      */
     private RBNode successor(RBNode node) {
         assert node != maxNode;
-        if (node.right != nil) {
+        if (node.hasRightChild()) {
             return subtreeMin(node.right);
         } else {
             while (node.relationToParent() == Direction.Right) {
@@ -551,7 +552,7 @@ public class RBTree {
      */
     private RBNode predecessor(RBNode node) {
         assert node != minNode;
-        if (node.left != nil) {
+        if (node.hasLeftChild()) {
             return subtreeMax(node.left);
         } else {
             while (node.relationToParent() == Direction.Left) {
@@ -569,13 +570,13 @@ public class RBTree {
      * precondition: node != null
      *
      * @param node The head of the sub-tree on which to look for the minimum key
-     * @return The node with the smallest key in the subtree
+     * @return The node with the smallest key in the subtree. if node == nil, null is returned.
      */
     private RBNode subtreeMin(RBNode node) {
         if (node == nil) {
             return null;
         }
-        while (node.left != nil) {
+        while (node.hasLeftChild()) {
             node = node.left;
         }
         return node;
@@ -589,13 +590,13 @@ public class RBTree {
      * precondition: node != null
      *
      * @param node The head of the sub-tree on which to look for the maximum key
-     * @return The node with the biggest key in the subtree
+     * @return The node with the biggest key in the subtree. if node == nil, null is returned.
      */
     private RBNode subtreeMax(RBNode node) {
         if (node == nil) {
             return null;
         }
-        while (node.right != nil) {
+        while (node.hasRightChild()) {
             node = node.right;
         }
         return node;
@@ -796,11 +797,7 @@ public class RBTree {
      * @return The opposite direction from the one given
      */
     private Direction oppositeDirection(Direction direction) {
-        if (direction == Direction.Left) {
-            return Direction.Right;
-        } else {
-            return Direction.Left;
-        }
+        return (direction == Direction.Left) ? Direction.Right : Direction.Left;
     }
 
     // Note - All the function from here on down are just for debugging or testing purpose.
@@ -817,6 +814,16 @@ public class RBTree {
 
     int selectKey(int index) {
         return select(index).key;
+    }
+
+    int minKey() {
+        assert minNode != null;
+        return minNode.key;
+    }
+
+    int maxKey() {
+        assert maxNode != null;
+        return maxNode.key;
     }
 
     void printTreeMinimal() {
@@ -843,20 +850,6 @@ public class RBTree {
             printTree();
             throw throwable;
         }
-    }
-
-    int minKey() {
-        if (minNode == null) {
-            return 0;
-        }
-        return minNode.key;
-    }
-
-    int maxKey() {
-        if (maxNode == null) {
-            return 0;
-        }
-        return minNode.key;
     }
 
     private void checkTreeInvariants_() {
