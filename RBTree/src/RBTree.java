@@ -426,7 +426,7 @@ public class RBTree {
             node = successorNode;
         }
 
-        //Note: now node has 0 or 1 child
+        // Note: now node has 0 or 1 child
 
         if (node.hasChildren()) {
             RBNode child = node.hasLeftChild() ? node.left : node.right;
@@ -468,14 +468,15 @@ public class RBTree {
 
             RBNode brother = node.getBrother();
             if (brother.color == Color.Red) {
-                // Case 1
+                // Case 1: node's brother is red
+                // Switch colors between brother and parent, then rotate parent towards node.
                 brother.color = Color.Black;
                 node.parent.color = Color.Red;
                 color_switches += 2;
                 node.parent.rotate(direction);
-                brother = node.getBrother();
-            }
-            if (node.getNephewNear().color == Color.Black && node.getNephewFar().color == Color.Black) {
+                assert node.getBrother().color == Color.Black;
+                // Note: now node's brother is surely black, and we will get to case 2/3/4.
+            } else if (node.getNephewNear().color == Color.Black && node.getNephewFar().color == Color.Black) {
                 // Case 2
                 brother.color = Color.Red;
                 color_switches += 1;
@@ -532,6 +533,7 @@ public class RBTree {
      * Finds the predecessor to a node in the tree.
      * Works at O(logn) where n is the number of nodes in the tree
      * precondition: node != minNode
+     *
      * @param node The node who's predecessor we want to find
      * @return The node with the biggest key value which is still smaller than the current
      */
@@ -553,6 +555,7 @@ public class RBTree {
      * Finds the smallest value in the current subtree
      * Works at O(logn) where n is the number of nodes in the sub-tree
      * precondition: node != null
+     *
      * @param node The head of the sub-tree on which to look for the minimum key
      * @return The node with the smallest key in the subtree
      */
@@ -572,6 +575,7 @@ public class RBTree {
      * Finds the biggest value in the current subtree
      * Works at O(logn) where n is the number of nodes in the sub-tree
      * precondition: node != null
+     *
      * @param node The head of the sub-tree on which to look for the maximum key
      * @return The node with the biggest key in the subtree
      */
@@ -590,6 +594,7 @@ public class RBTree {
      * <p>
      * Returns the actual root of the tree (not the dummy root)
      * Works at O(1)
+     *
      * @return The real root node of the tree
      */
     private RBNode root() {
@@ -602,6 +607,7 @@ public class RBTree {
      * Returns the value of the item with the smallest key in the tree,
      * or null if the tree is empty
      * Works at O(1)
+     *
      * @return The value for the node with the minimum key in the tree, or null if the tree is empty
      */
     public String min() {
@@ -617,6 +623,7 @@ public class RBTree {
      * Returns the value of the item with the largest key in the tree,
      * or null if the tree is empty
      * Works at O(1)
+     *
      * @return The value for the node with the maximum key in the tree, or null if the tree is empty
      */
     public String max() {
@@ -640,6 +647,7 @@ public class RBTree {
          * public IndexedConsumer(BiConsumer<T, Integer> baseFunction)
          * <p>
          * Constructor for the class
+         *
          * @param baseFunction - The function to call each time we are called by the previous Consumer<T>
          */
         public IndexedConsumer(BiConsumer<T, Integer> baseFunction) {
@@ -652,6 +660,7 @@ public class RBTree {
          * <p>
          * Implements the Consumer<T> interface. Get called each time a new value is ready to be consumed,
          * passes it to the baseFunction together with the calling index
+         *
          * @param arg The value to consume
          */
         public void accept(T arg) {
@@ -665,7 +674,8 @@ public class RBTree {
      * <p>
      * Applies the given function to all the nodes in the tree in pre-order
      * Works in O(n) where n is the number of nodes in the sub-tree under node
-     * @param node The node to start the tree-walk from
+     *
+     * @param node     The node to start the tree-walk from
      * @param consumer The function to run on each node
      */
     private void walkPreOrder(RBNode node, Consumer<RBNode> consumer) {
@@ -677,7 +687,8 @@ public class RBTree {
      * <p>
      * Applies the given function to all the nodes in the tree in order
      * Works in O(n) where n is the number of nodes in the sub-tree under node
-     * @param node The node to start the tree-walk from
+     *
+     * @param node     The node to start the tree-walk from
      * @param consumer The function to run on each node
      */
     private void walkInOrder(RBNode node, Consumer<RBNode> consumer) {
@@ -689,7 +700,8 @@ public class RBTree {
      * <p>
      * Applies the given function to all the nodes in the tree in post-order
      * Works in O(n) where n is the number of nodes in the sub-tree under node
-     * @param node The node to start the tree-walk from
+     *
+     * @param node     The node to start the tree-walk from
      * @param consumer The function to run on each node
      */
     private void walkPostOrder(RBNode node, Consumer<RBNode> consumer) {
@@ -701,9 +713,10 @@ public class RBTree {
      * <p>
      * Walks the given subtree and applies the given functions in pre, post and in-order fashions
      * Works in O(n) where n is the number of nodes in the sub-tree under node
-     * @param node The node to start the tree-walk from
-     * @param consumerPre The function to run on nodes in pre-order
-     * @param consumerIn The function to run on nodes in-order
+     *
+     * @param node         The node to start the tree-walk from
+     * @param consumerPre  The function to run on nodes in pre-order
+     * @param consumerIn   The function to run on nodes in-order
      * @param consumerPost The function to run on nodes in post-order
      */
     private void walk(RBNode node, Consumer<RBNode> consumerPre, Consumer<RBNode> consumerIn, Consumer<RBNode> consumerPost) {
@@ -722,6 +735,7 @@ public class RBTree {
      * <p>
      * Returns a sorted array which contains all keys in the tree,
      * or an empty array if the tree is empty.
+     *
      * @return All the keys for all the nodes in the tree
      */
     public int[] keysToArray() {
@@ -736,6 +750,7 @@ public class RBTree {
      * Returns an array which contains all values in the tree,
      * sorted by their respective keys,
      * or an empty array if the tree is empty.
+     *
      * @return All the values for all the nodes in the tree
      */
     public String[] valuesToArray() {
@@ -751,6 +766,7 @@ public class RBTree {
      * <p>
      * precondition: none
      * postcondition: none
+     *
      * @return The number of elements in the tree
      */
     public int size() {
@@ -763,6 +779,7 @@ public class RBTree {
      * Flips the given direction, used for making the insert and delete more symmetric
      * precondition: none
      * postcondition: none
+     *
      * @param direction The direction to flip
      * @return The opposite direction from the one given
      */
