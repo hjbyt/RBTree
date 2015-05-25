@@ -158,16 +158,15 @@ public class RBTreeTest {
     }
 
     @Test
-    public void simple() throws Exception {
+    public void simpleDelete() throws Exception {
         RBTree tree = new RBTree();
-        tree.insert(4160, "1");
+        tree.insert(17, "a");
+        tree.insert(16, "b");
+        tree.insert(19, "c");
+        tree.insert(18, "d");
         tree.checkTreeInvariants();
-        tree.insert(458, "2");
-        tree.checkTreeInvariants();
-        tree.insert(9356, "3");
-        tree.checkTreeInvariants();
-        tree.insert(8400, "4");
-        tree.checkTreeInvariants();
+        tree.printTree();
+        tree.delete(16);
     }
 
     @Test
@@ -215,24 +214,28 @@ public class RBTreeTest {
         return randomized;
     }
 
-    private void clearTree(RBTree tree) {
+    private void clearTree(RBTree tree, boolean heavy_checks) {
         for (int key : tree.keysToArray()) {
-            System.out.println("**************************************");
-            tree.printTree();
             tree.delete(key);
-            tree.checkTreeInvariants();
+            tree.printTree();
+            if (heavy_checks) {
+                tree.checkTreeInvariants();
+            }
         }
     }
 
     @Test
     public void printMeasurements() throws Exception {
+        boolean heavy_checks = true; // For the final one where we time things we want it to go faster
         for (int i = 1; i <= 10; i++) {
             int[] numbers_to_insert = getRandomNumbers(i * 10);
-            clearTree(rb1);
+            clearTree(rb1, heavy_checks);
             int color_changes = 0;
             for (int number : numbers_to_insert) {
                 color_changes += rb1.insert(number, Integer.toString(number));
-                rb1.checkTreeInvariants();
+                if (heavy_checks) {
+                    rb1.checkTreeInvariants();
+                }
             }
             System.out.println(Integer.toString(i) + " : " + Integer.toString(color_changes));
         }

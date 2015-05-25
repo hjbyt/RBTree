@@ -170,8 +170,10 @@ public class RBTree {
                 toFix.parent.parent.rotate(opposite);
             }
         }
-        root().color = Color.Black;
-        colorSwitchCount += 1;
+        if (root().color == Color.Red) {
+            root().color = Color.Black;
+            colorSwitchCount += 1;
+        }
         return colorSwitchCount;
     }
 
@@ -335,7 +337,7 @@ public class RBTree {
 
         RBNode w;
         while (x != root() && x.color == Color.Black) {
-            Direction direction = x == x.parent.left ? Direction.Left : Direction.Right;
+            Direction direction = x.relationToParent();
             Direction opposite = oppositeDirection(direction);
 
             w = x.parent.getChild(opposite);
@@ -534,22 +536,6 @@ public class RBTree {
     public int size() {
         return size;
     }
-
-    //TODO XXX
-//    private class PrintingThrowable extends Throwable {
-//        private RBTree tree;
-//
-//        public PrintingThrowable(Throwable cause, RBTree tree) {
-//            super(cause);
-//            this.tree = tree;
-//        }
-//
-//        @Override
-//        public void printStackTrace(PrintStream s) {
-//            this.tree.printTree(s);
-//            super.printStackTrace(s);
-//        }
-//    }
 
     RBNode select(int index) {
         RBNode node = minNode;
