@@ -285,7 +285,7 @@ public class RBTreeTest {
                 } while (map.containsKey(r));
                 assertThat(rb.delete(r), is(-1));
                 compareAndCheck(map, rb);
-            } else if (r < 95) {
+            } else if (r < 94) {
                 // add min/max
                 r = rand.nextInt(2);
                 if (r == 0) {
@@ -302,8 +302,9 @@ public class RBTreeTest {
                     compareAndCheck(map, rb);
                 }
 
-            } else {
+            } else if (r < 98) {
                 // delete min/max
+                r = rand.nextInt(2);
                 if (r == 0) {
                     //min
                     int k = rb.minKey();
@@ -317,8 +318,14 @@ public class RBTreeTest {
                     rb.delete(k);
                     compareAndCheck(map, rb);
                 }
+            } else {
+                // delete root
+                int k = rb.rootKey();
+                map.remove(k);
+                rb.delete(k);
+                compareAndCheck(map, rb);
             }
-            //TODO: add delete root case
+
         }
 
         // delete remaining nodes

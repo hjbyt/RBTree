@@ -826,6 +826,10 @@ public class RBTree {
         return maxNode.key;
     }
 
+    int rootKey() {
+        return root().key;
+    }
+
     void printTreeMinimal() {
         printTree(System.out, false, nil);
     }
@@ -921,11 +925,7 @@ public class RBTree {
         }
 
         RBNode getChild(Direction direction) {
-            if (direction == Direction.Left) {
-                return left;
-            } else {
-                return right;
-            }
+            return (direction == Direction.Left) ? left : right;
         }
 
         void setChild(Direction direction, RBNode node) {
@@ -959,6 +959,7 @@ public class RBTree {
             parent.setChild(relationToParent(), node);
         }
 
+        //TODO: remove this?
         // Replace this node with another node, keeping this node's subtrees.
         void replace(RBNode node) {
             transplant(node);
