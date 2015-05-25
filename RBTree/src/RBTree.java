@@ -41,18 +41,14 @@ public class RBTree {
     // Default Constructor
     public RBTree() {
         // Create dummy node
-        rootDummy = new RBNode(Color.Black);
+        rootDummy = new RBNode(null, null, null, Color.Black, Integer.MAX_VALUE, null);
         //TODO: should we do something different?
         //      because if a key with this value is inserted/deleted it would be an error.
-        rootDummy.key = Integer.MAX_VALUE;
-        rootDummy.parent = rootDummy;
 
-        nil = new RBNode(Color.Black);
-        nil.parent = rootDummy;
-        nil.left = null;
-        nil.right = null;
+        nil = new RBNode(rootDummy, null, null, Color.Black, 0, null);
         rootDummy.left = nil;
         rootDummy.right = nil;
+
         minNode = null;
         maxNode = null;
 
@@ -191,12 +187,7 @@ public class RBTree {
             return -1;
         }
 
-        RBNode node = new RBNode(Color.Red);
-        node.key = k;
-        node.item = v;
-        node.parent = parent;
-        node.left = nil;
-        node.right = nil;
+        RBNode node = new RBNode(parent, nil, nil, Color.Red, k, v);
 
         if (empty()) {
             minNode = node;
@@ -579,7 +570,7 @@ public class RBTree {
     private void checkTreeInvariants_() {
         assert !rootDummy.hasRightChild() : "rootDummy has a right child";
         assert rootDummy.color == Color.Black : "Invalid color for rootDummy";
-        assert rootDummy.parent == rootDummy : "Invalid parent for rootDummy";
+        assert rootDummy.parent == null : "Invalid parent for rootDummy";
         assert nil.color == Color.Black : "Invalid color for nil";
         assert nil.right == null && nil.left == null : "Invalid child for nil";
         assert nil.key == 0 : "Invalid key nil";
@@ -650,10 +641,6 @@ public class RBTree {
             this.color = color;
             this.key = key;
             this.item = item;
-        }
-
-        public RBNode(Color color) {
-            this.color = color;
         }
 
         public RBNode getChild(Direction direction) {
