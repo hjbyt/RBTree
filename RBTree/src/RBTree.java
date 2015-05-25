@@ -484,24 +484,31 @@ public class RBTree {
                 node = node.parent;
                 // Now if the parent is black, we move the issue to the parent.
                 // If it is red, then the loop terminates, and it will be made black afterwards, and the fixing is over.
+            } else if (node.getNephewFar().color == Color.Black) {
+                // Case 3: brother is black, far nephew is black, and near nephew is red.
+                assert node.getNephewNear().color == Color.Red;
+                // Switch brother and near-nephew's colors, and rotate brother right.
+                // This keeps the invariants of node's brother subtree.
+                node.getNephewNear().color = Color.Black;
+                brother.color = Color.Red;
+                color_switches += 2;
+                brother.rotate(opposite);
+                // Now node's brother is red, which bring us to case 4.
             } else {
-                if (node.getNephewFar().color == Color.Black) {
-                    // Case 3: brother is black, far nephew is black, and near nephew is red.
-                    node.getNephewNear().color = Color.Black;
-                    brother.color = Color.Red;
-                    color_switches += 2;
-                    brother.rotate(opposite);
-                    brother = node.getBrother();
-                }
-                // Case 4
-                brother.color = node.parent.color;
-                node.parent.color = Color.Black;
+                // Case 4: brother is black, far nephew is red.
+                // Change parent, brother, far-nephew colors, and rotate parent towards node.
+                // This is a terminal case.
+                brother.color = node.parent.color; //TODO XXX: this might not change color. should we count it ???
+                node.parent.color = Color.Black; //TODO XXX: this might not change color. should we count it ???
                 node.getNephewFar().color = Color.Black;
                 color_switches += 3;
                 node.parent.rotate(direction);
+                // Set node to root, to terminate the loop, and possibly update root's color afterwards.
                 node = root();
             }
         }
+        // In some of cases (2,4) we might terminate when node is red.
+        // in that case, changing node to black will restore the black-law.
         if (node.color == Color.Red) {
             node.color = Color.Black;
             color_switches += 1;
