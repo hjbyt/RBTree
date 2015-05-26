@@ -345,34 +345,30 @@ public class RBTree {
      */
     private int insertFixup(RBNode node) {
         // TODO: put a few comments here
-        // TODO: make sure to only count "real" color switches
         int colorSwitchCount = 0;
+
         while (node.parent.color == Color.Red) {
             Direction direction = node.parent.relationToParent();
             Direction opposite = oppositeDirection(direction);
 
             RBNode uncle = node.getUncle();
             if (uncle.color == Color.Red) {
-                node.parent.color = Color.Black;
-                uncle.color = Color.Black;
-                node.parent.parent.color = Color.Red;
-                colorSwitchCount += 3;
+                colorSwitchCount += setColor(node.parent, Color.Black);
+                colorSwitchCount += setColor(uncle, Color.Black);
+                colorSwitchCount += setColor(node.parent.parent, Color.Red);
                 node = node.parent.parent;
             } else {
                 if (node.relationToParent() == opposite) {
                     node = node.parent;
                     node.rotate(direction);
                 }
-                node.parent.color = Color.Black;
-                node.parent.parent.color = Color.Red;
-                colorSwitchCount += 2;
+                colorSwitchCount += setColor(node.parent, Color.Black);
+                colorSwitchCount += setColor(node.parent.parent, Color.Red);
                 node.parent.parent.rotate(opposite);
             }
         }
-        if (root().color == Color.Red) {
-            root().color = Color.Black;
-            colorSwitchCount += 1;
-        }
+        colorSwitchCount += setColor(root(), Color.Black);
+
         return colorSwitchCount;
     }
 
