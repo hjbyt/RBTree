@@ -221,15 +221,8 @@ public class RBTreeTest {
         for (MapPair pair : maps) {
             int k = Integer.MAX_VALUE;
             String s = "" + k;
-            pair.map.put(k, s);
-            pair.rb.insert(k, s);
-            compareAndCheck(pair.map, pair.rb);
-
-            pair.map.remove(k);
-            assertThat(pair.rb.delete(k), not(-1));
-            compareAndCheck(pair.map, pair.rb);
-
-            assertThat(pair.rb.delete(k), is(-1));
+            assertEquals(pair.rb.insert(k, s), -1);
+            assertEquals(pair.rb.delete(k), -1);
         }
     }
 

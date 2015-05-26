@@ -98,8 +98,6 @@ public class RBTree {
     public RBTree() {
         // Create dummy node
         rootDummy = new RBNode(null, null, null, Color.Black, Integer.MAX_VALUE, null);
-        //TODO: should we do something different?
-        //      because if a key with this value is inserted/deleted it would be an error.
 
         nil = new RBNode(rootDummy, null, null, Color.Black, 0, null);
         rootDummy.left = nil;
@@ -304,6 +302,9 @@ public class RBTree {
      * @return The number of node-color changes that happened during the insert, or -1 if an error occurs
      */
     public int insert(int k, String v) {
+        if (k == rootDummy.key) {
+            return -1;
+        }
         RBNode parent = getPositionByKey(k);
         if (parent.key == k) {
             return -1;
@@ -387,6 +388,9 @@ public class RBTree {
      * @return The number of node-color changes that happened during the insert, or -1 if an error occurs
      */
     public int delete(int k) {
+        if (k == rootDummy.key) {
+            return -1;
+        }
         RBNode node = searchNode(k);
         if (node == null) {
             return -1;
