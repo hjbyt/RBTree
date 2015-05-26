@@ -345,6 +345,7 @@ public class RBTree {
      */
     private int insertFixup(RBNode node) {
         // TODO: put a few comments here
+        // TODO: make sure to only count "real" color switches
         int colorSwitchCount = 0;
         while (node.parent.color == Color.Red) {
             Direction direction = node.parent.relationToParent();
@@ -508,10 +509,16 @@ public class RBTree {
                 // Case 4: brother is black, far nephew is red.
                 // Change parent, brother, far-nephew colors, and rotate parent towards node.
                 // This is a terminal case.
-                brother.color = node.parent.color; //TODO XXX: this might not change color. should we count it ???
-                node.parent.color = Color.Black; //TODO XXX: this might not change color. should we count it ???
+                if (brother.color != node.parent.color) {
+                    brother.color = node.parent.color;
+                    color_switches += 1;
+                }
+                if (node.parent.color != Color.Black) {
+                    node.parent.color = Color.Black;
+                    color_switches += 1;
+                }
                 node.getNephewFar().color = Color.Black;
-                color_switches += 3;
+                color_switches += 1;
                 node.parent.rotate(direction);
                 // Set node to root, to terminate the loop, and possibly update root's color afterwards.
                 node = root();
