@@ -481,17 +481,15 @@ public class RBTree {
             if (brother.color == Color.Red) {
                 // Case 1: brother is red
                 // Switch colors between brother and parent, then rotate parent towards node.
-                brother.color = Color.Black;
-                node.parent.color = Color.Red;
-                color_switches += 2;
+                color_switches += setColor(brother, Color.Black);
+                color_switches += setColor(node.parent, Color.Red);
                 node.parent.rotate(direction);
                 assert node.getBrother().color == Color.Black;
                 // Note: now node's brother is surely black, and we will get to case 2/3/4.
             } else if (node.getNephewNear().color == Color.Black && node.getNephewFar().color == Color.Black) {
                 // Case 2: brother is black, and both nephews are black.
                 // Set brother's color to red, to make the black-height of node and brother the same.
-                brother.color = Color.Red;
-                color_switches += 1;
+                color_switches += setColor(brother, Color.Red);
                 node = node.parent;
                 // Now if the parent is black, we move the issue to the parent.
                 // If it is red, then the loop terminates, and it will be made black afterwards, and the fixing is over.
@@ -500,25 +498,17 @@ public class RBTree {
                 assert node.getNephewNear().color == Color.Red;
                 // Switch brother and near-nephew's colors, and rotate brother right.
                 // This keeps the invariants of node's brother subtree.
-                node.getNephewNear().color = Color.Black;
-                brother.color = Color.Red;
-                color_switches += 2;
+                color_switches += setColor(node.getNephewNear(), Color.Black);
+                color_switches += setColor(brother, Color.Red);
                 brother.rotate(opposite);
                 // Now node's brother is red, which bring us to case 4.
             } else {
                 // Case 4: brother is black, far nephew is red.
                 // Change parent, brother, far-nephew colors, and rotate parent towards node.
                 // This is a terminal case.
-                if (brother.color != node.parent.color) {
-                    brother.color = node.parent.color;
-                    color_switches += 1;
-                }
-                if (node.parent.color != Color.Black) {
-                    node.parent.color = Color.Black;
-                    color_switches += 1;
-                }
-                node.getNephewFar().color = Color.Black;
-                color_switches += 1;
+                color_switches += setColor(brother, node.parent.color);
+                color_switches += setColor(node.parent, Color.Black);
+                color_switches += setColor(node.getNephewFar(), Color.Black);
                 node.parent.rotate(direction);
                 // Set node to root, to terminate the loop, and possibly update root's color afterwards.
                 node = root();
@@ -526,12 +516,18 @@ public class RBTree {
         }
         // In some of cases (2,4) we might terminate when node is red.
         // in that case, changing node to black will restore the black-law.
-        if (node.color == Color.Red) {
-            node.color = Color.Black;
-            color_switches += 1;
-        }
+        color_switches += setColor(node, Color.Black);
 
         return color_switches;
+    }
+
+    //TODO: doc
+    private int setColor(RBNode node, Color color) {
+        if (node.color != color) {
+            node.color = color;
+            return 1;
+        }
+        return 0;
     }
 
     /**
