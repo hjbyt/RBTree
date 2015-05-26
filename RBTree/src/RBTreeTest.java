@@ -204,16 +204,24 @@ public class RBTreeTest {
 
     @Test
     public void printMeasurements() throws Exception {
-        //TODO XXX
-//        for (int i = 1; i <= 10; i++) {
-//            RBTree tree = new RBTree();
-//            int[] numbers_to_insert = getRandomNumbers(i * 10000);
-//            int color_changes = 0;
-//            for (int number : numbers_to_insert) {
-//                color_changes += tree.insert(number, Integer.toString(number));
-//            }
-//            System.out.println(Integer.toString(i) + " : " + Integer.toString(color_changes));
-//        }
+        for (int i = 1; i <= 10; i++) {
+            RBTree tree = new RBTree();
+            int number_of_elemets = i * 10000;
+            int[] numbers_to_insert = getRandomNumbers(number_of_elemets);
+            int insert_color_changes = 0;
+            int delete_color_changes = 0;
+            for (int number : numbers_to_insert) {
+                insert_color_changes += tree.insert(number, Integer.toString(number));
+            }
+            for (int j = 1; j < number_of_elemets; j++) {
+                delete_color_changes += tree.delete(j);
+            }
+            double average_insert_changes = ((double)insert_color_changes)/number_of_elemets;
+            double average_delete_changes = ((double)delete_color_changes)/number_of_elemets;
+            System.out.println("****** " + Integer.toString(number_of_elemets) + " ******");
+            System.out.println("Insert: " + Integer.toString(insert_color_changes) + " Average: " + Double.toString(average_insert_changes));
+            System.out.println("Delete: " + Integer.toString(delete_color_changes) + " Average: " + Double.toString(average_delete_changes));
+        }
     }
 
     @Test

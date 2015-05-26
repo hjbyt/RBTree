@@ -4,12 +4,6 @@ import java.util.TreeMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-//TODO: decide which methods should be in RBNode and which shouldn't.
-// e.g. should hasLeftChild say in RBNode (it references nil, which is outside of it)
-// and should successor/predecessor be in RBNode?
-// or maybe should RBNode be agnostic to the order of node, which is imposed by the tree...
-//TODO: write doc (use generate javadoc?
-//TODO: perform and explain measurements
 //TODO: send (don't forget to add our name and ID!)
 
 /**
@@ -18,7 +12,6 @@ import java.util.function.Consumer;
  * An implementation of a Red Black Tree with
  * non-negative, distinct integer keys and values
  */
-
 public class RBTree {
 
     /**
@@ -295,7 +288,7 @@ public class RBTree {
      * the tree must remain valid (keep its invariants).
      * returns the number of color switches, or 0 if no color switches were necessary.
      * returns -1 if an item with key k already exists in the tree.
-     * TODO - Add O()
+     * Works at O(logn)
      *
      * @param k The key of the new node to insert into the tree
      * @param v The new value to insert into the tree
@@ -338,7 +331,7 @@ public class RBTree {
      * private int insertFixup(RBNode toFix)
      * <p>
      * Fixes the tree to retain it's red-black properties after a node was inserted
-     * TODO - Add O()
+     * Works at O(logn)
      *
      * @param node The node from which to start the fix
      * @return The number of color changes made to nodes in order to maintain the red-black property
@@ -379,7 +372,7 @@ public class RBTree {
      * the tree must remain valid (keep its invariants).
      * returns the number of color switches, or 0 if no color switches were needed.
      * returns -1 if an item with key k was not found in the tree.
-     * TODO - Add O()
+     * Works at O(logn)
      *
      * @param k The key who's node we want to delete
      * @return The number of node-color changes that happened during the insert, or -1 if an error occurs
@@ -393,7 +386,6 @@ public class RBTree {
             return -1;
         }
 
-        //TODO: make sure these don't affect runtime complexity of delete
         if (size == 1) {
             minNode = null;
             maxNode = null;
@@ -411,7 +403,7 @@ public class RBTree {
      * private int deleteNode(RBNode node)
      * <p>
      * Deletes a node from the RBTree
-     * * TODO - Add O()
+     * * Works at O(logn)
      *
      * @param node The node to delete
      * @return The number of node-color changes that happened during the delete
@@ -461,7 +453,7 @@ public class RBTree {
      * private int deleteFixup(RBNode x)
      * <p>
      * Fixes the red-black tree to maintain it's red-black properties after a node was deleted
-     * TODO - Add O()
+     * Works at O(logn)
      *
      * @param node The node from which to start the fixup-process
      * @return The number of node-color changes that happened during the delete
@@ -517,7 +509,15 @@ public class RBTree {
         return color_switches;
     }
 
-    //TODO: doc
+    /**
+     * private int setColor(RBNode node, Color color)
+     * <p>
+     * Sets the node color to the new color, and counts weather or not it was a color change or not.
+     * The function is used to count color changes which actually change color, as opposed to "might" change the color
+     *
+     * @param node The node who's color we are trying to change
+     * @return 1 if the node's color was actually changed, 0 otherwise
+     */
     private int setColor(RBNode node, Color color) {
         if (node.color != color) {
             node.color = color;
@@ -808,9 +808,11 @@ public class RBTree {
         return (direction == Direction.Left) ? Direction.Right : Direction.Left;
     }
 
-    // Note - All the function from here on down are just for debugging or testing purpose.
-    // Because of that they are package-private (so we could use them in RBTreeTest), but we don't
-    // document them because they aren't required or needed for any external use
+    /**
+     * All the function from here on down are just for debugging or testing purpose.
+     * Because of that they are package-private (so we could use them in RBTreeTest), but we don't
+     * document them because they aren't required or needed for any external use
+     */
 
     RBNode select(int index) {
         RBNode node = minNode;
@@ -836,10 +838,6 @@ public class RBTree {
 
     int rootKey() {
         return root().key;
-    }
-
-    void printTreeMinimal() {
-        printTree(System.out, false, nil);
     }
 
     void printTree() {
@@ -914,6 +912,11 @@ public class RBTree {
         return black_length;
     }
 
+    /**
+     * Represents an internal Node in the tree
+     * All members and methods in this class aren't marked as either public or private
+     * in order to allow them to be freely used in the RBTree methods
+     */
     private class RBNode {
 
         RBNode parent;
@@ -923,6 +926,18 @@ public class RBTree {
         int key;
         String item;
 
+        /**
+         * RBNode(RBNode parent, RBNode left, RBNode right, Color color, int key, String item) {
+         * <p>
+         * A constructor for the RBNode structure that initializes all the members using the given paramenters
+         *
+         * @param parent The node which to set as parent
+         * @param left The node to set as the left child
+         * @param right The node to set as the right child
+         * @param color The initial color for the node
+         * @param key The node's key
+         * @param item The item to set for the node
+         */
         RBNode(RBNode parent, RBNode left, RBNode right, Color color, int key, String item) {
             this.parent = parent;
             this.left = left;
@@ -932,10 +947,29 @@ public class RBTree {
             this.item = item;
         }
 
+        /**
+         * RBNode getChild(Direction direction)
+         * <p>
+         * Returns the child from the given direction. Used to make direction agnostic code
+         * Works in O(1)
+         *
+         * @param direction The direction of the child to return
+         * @return The child node in the given direction
+         */
         RBNode getChild(Direction direction) {
             return (direction == Direction.Left) ? left : right;
         }
 
+        /**
+         * void setChild(Direction direction, RBNode node)
+         * <p>
+         * Set the child from the given direction. Used to make direction agnostic code
+         * Works in O(1)
+         *
+         * @param direction The direction of the child to return
+         * @param node The node to set as the child
+         * @return The child node in the given direction
+         */
         void setChild(Direction direction, RBNode node) {
             if (direction == Direction.Left) {
                 setLeft(node);
@@ -944,6 +978,14 @@ public class RBTree {
             }
         }
 
+        /**
+         * void rotate(Direction direction)
+         * <p>
+         * Rotates the node in the given direction (like done in Cormen to restore the RB properties of a tree)
+         * Works in O(1)
+         *
+         * @param direction The direction in which to rotate the nodes
+         */
         void rotate(Direction direction) {
             if (direction == Direction.Left) {
                 rotateLeft();
@@ -952,27 +994,42 @@ public class RBTree {
             }
         }
 
+        /**
+         * void setLeft(RBNode node)
+         * <p>
+         * Sets the left child as the given node
+         * Works in O(1)
+         *
+         * @param node The node to set as the left child
+         */
         void setLeft(RBNode node) {
             left = node;
             node.parent = this;
         }
 
+        /**
+         * void setRight(RBNode node)
+         * <p>
+         * Sets the right child as the given node
+         * Works in O(1)
+         *
+         * @param node The node to set as the right child
+         */
         void setRight(RBNode node) {
             right = node;
             node.parent = this;
         }
 
-        // Replace this node with another node and it's subtrees
+        /**
+         * void transplant(RBNode node)
+         * <p>
+         * Implements the transplant function (as described in Cormen)
+         * Works in O(1)
+         *
+         * @param node The node to transplant
+         */
         void transplant(RBNode node) {
             parent.setChild(relationToParent(), node);
-        }
-
-        //TODO: remove this?
-        // Replace this node with another node, keeping this node's subtrees.
-        void replace(RBNode node) {
-            transplant(node);
-            node.setLeft(left);
-            node.setRight(right);
         }
 
         void rotateLeft() {
@@ -988,6 +1045,12 @@ public class RBTree {
             setLeft(oldLeft.right);
             oldLeft.setRight(this);
         }
+
+        /**
+         *
+         * All the methods from here down are just to make the code clearer
+         * and are all trivial, therefore there is no need to document them thoroughly
+         */
 
         boolean isRightChild() {
             return parent.right == this;
@@ -1037,6 +1100,13 @@ public class RBTree {
             return right != nil;
         }
 
+        /**
+         *
+         * The methods from here on down are used for printing the tree
+         * and aren't required for anything else than debugging, therefore
+         * they too won't be thoroughly documented.
+         */
+
         @Override
         public String toString() {
             if (this == nil) {
@@ -1076,5 +1146,4 @@ public class RBTree {
             }
         }
     }
-
 }
