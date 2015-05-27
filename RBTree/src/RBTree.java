@@ -503,7 +503,7 @@ public class RBTree {
             }
         }
         // In some of cases (2,4) we might terminate when node is red.
-        // in that case, changing node to black will restore the black-law.
+        // in that case, changing node to black will restore the black-rule.
         color_switches += setColor(node, Color.Black);
 
         return color_switches;
@@ -968,7 +968,6 @@ public class RBTree {
          *
          * @param direction The direction of the child to return
          * @param node The node to set as the child
-         * @return The child node in the given direction
          */
         void setChild(Direction direction, RBNode node) {
             if (direction == Direction.Left) {
