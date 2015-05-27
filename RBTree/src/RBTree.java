@@ -337,29 +337,40 @@ public class RBTree {
      * @return The number of color changes made to nodes in order to maintain the red-black property
      */
     private int insertFixup(RBNode node) {
-        // TODO: put a few comments here
         int colorSwitchCount = 0;
 
         while (node.parent.color == Color.Red) {
             Direction direction = node.parent.relationToParent();
             Direction opposite = oppositeDirection(direction);
 
+            // Fix red-rule violation
             RBNode uncle = node.getUncle();
             if (uncle.color == Color.Red) {
+                // Case 1: parent and uncle are red.
+                // Swap colors between black grandparent and its red children
                 colorSwitchCount += setColor(node.parent, Color.Black);
                 colorSwitchCount += setColor(uncle, Color.Black);
                 colorSwitchCount += setColor(node.parent.parent, Color.Red);
                 node = node.parent.parent;
+                // Note: now the the red-rule violation is either solved, or moved two levels up.
+            } else if (node.relationToParent() == opposite) {
+                // Case 2: parent is red, uncle is black, and node is between parent and grandparent.
+                // Move to parent and rotate left.
+                // This doesn't improve our situation regarding the red-rule, but it brings us to Case 3.
+                node = node.parent;
+                node.rotate(direction);
             } else {
-                if (node.relationToParent() == opposite) {
-                    node = node.parent;
-                    node.rotate(direction);
-                }
+                // Case 3: parent is red, uncle is black, and parent is between node and grandparent.
+                // Swap parent and grandparent colors, (fixing the red rule, but violate the black-rule)
                 colorSwitchCount += setColor(node.parent, Color.Black);
                 colorSwitchCount += setColor(node.parent.parent, Color.Red);
+                // Rotate grandparent to fix the black-rule.
                 node.parent.parent.rotate(opposite);
+                // Note the red-rule and black-rule are now ok, and the loop will terminate.
             }
         }
+
+        // Set root to black if needed
         colorSwitchCount += setColor(root(), Color.Black);
 
         return colorSwitchCount;
