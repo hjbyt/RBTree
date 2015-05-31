@@ -943,11 +943,11 @@ public class RBTree {
          * A constructor for the RBNode structure that initializes all the members using the given paramenters
          *
          * @param parent The node which to set as parent
-         * @param left The node to set as the left child
-         * @param right The node to set as the right child
-         * @param color The initial color for the node
-         * @param key The node's key
-         * @param item The item to set for the node
+         * @param left   The node to set as the left child
+         * @param right  The node to set as the right child
+         * @param color  The initial color for the node
+         * @param key    The node's key
+         * @param item   The item to set for the node
          */
         RBNode(RBNode parent, RBNode left, RBNode right, Color color, int key, String item) {
             this.parent = parent;
@@ -978,7 +978,7 @@ public class RBTree {
          * Works in O(1)
          *
          * @param direction The direction of the child to return
-         * @param node The node to set as the child
+         * @param node      The node to set as the child
          */
         void setChild(Direction direction, RBNode node) {
             if (direction == Direction.Left) {
@@ -1057,7 +1057,6 @@ public class RBTree {
         }
 
         /**
-         *
          * All the methods from here down are just to make the code clearer
          * and are all trivial, therefore there is no need to document them thoroughly
          */
@@ -1111,7 +1110,6 @@ public class RBTree {
         }
 
         /**
-         *
          * The methods from here on down are used for printing the tree
          * and aren't required for anything else than debugging, therefore
          * they too won't be thoroughly documented.
