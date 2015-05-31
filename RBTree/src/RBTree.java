@@ -1,10 +1,19 @@
+/**
+ * Red-Black Tree Implementation
+ *
+ * Authors: <Name1> <ID1> <USERNAME1>
+ *          <Name2> <ID2> <USERNAME2>
+ *
+ */
+
 import java.io.PrintStream;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-//TODO: send (don't forget to add our name and ID!)
+//TODO: finish up the doc
+//TODO: send (don't forget to fill our details, and to rename the file to RBTree_username1_username2.java)
 
 /**
  * RBTree
