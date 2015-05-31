@@ -221,10 +221,7 @@ public class RBTree {
      */
     public String search(int k) {
         RBNode node = searchNode(k);
-        if (node == null) {
-            return null;
-        }
-        return node.item;
+        return node == null ? null : node.item;
 
     }
 
@@ -239,10 +236,7 @@ public class RBTree {
      */
     private RBNode searchNode(int k) {
         RBNode node = getPositionByKey(k);
-        if (node.key != k) {
-            return null;
-        }
-        return node;
+        return node.key != k ? null : node;
     }
 
     /**
