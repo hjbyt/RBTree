@@ -643,10 +643,7 @@ public class RBTree {
      * @return The value for the node with the minimum key in the tree, or null if the tree is empty
      */
     public String min() {
-        if (minNode == null) {
-            return null;
-        }
-        return minNode.item;
+        return minNode == null ? null : minNode.item;
     }
 
     /**
@@ -659,10 +656,7 @@ public class RBTree {
      * @return The value for the node with the maximum key in the tree, or null if the tree is empty
      */
     public String max() {
-        if (minNode == null) {
-            return null;
-        }
-        return maxNode.item;
+        return minNode == null ? null : maxNode.item;
     }
 
     /**
