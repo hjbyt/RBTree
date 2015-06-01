@@ -191,7 +191,7 @@ public class RBTreeTest {
 
     private int[] getRandomNumbers(int list_length) {
         ArrayList<Integer> numbers = new ArrayList<>();
-        for (int i = 1; i < list_length; i++) {
+        for (int i = 1; i <= list_length; i++) {
             numbers.add(i);
         }
         Collections.shuffle(numbers);
@@ -213,7 +213,7 @@ public class RBTreeTest {
             for (int number : numbers_to_insert) {
                 insert_color_changes += tree.insert(number, Integer.toString(number));
             }
-            for (int j = 1; j < number_of_elemets; j++) {
+            for (int j = 1; j <= number_of_elemets; j++) {
                 delete_color_changes += tree.delete(j);
             }
             double average_insert_changes = ((double)insert_color_changes)/number_of_elemets;
