@@ -17,15 +17,12 @@ import java.util.function.Consumer;
 
 /**
  * RBTree
- * <p>
  * An implementation of a Red Black Tree with
  * non-negative, distinct integer keys and values
  */
 public class RBTree {
 
     /**
-     * static Consumer<RBNode> dummyConsumer
-     * <p>
      * A consumer for RBNodes that does nothing. Is used with inside the different version
      * of the walk function
      */
@@ -33,10 +30,7 @@ public class RBTree {
     };
 
     /**
-     * private enum Color
-     * <p>
      * Represents a possible color for a node in the red black tree.
-     * <p>
      */
     private enum Color {
         Black,
@@ -44,12 +38,9 @@ public class RBTree {
     }
 
     /**
-     * private enum Direction
-     * <p>
      * An enum used to represent a child's direction for a node in the tree.
      * The enum is used in order to make the Insert and Delete function direction-agnositc
      * in order to share code between the symmetric sides for edge-cases
-     * <p>
      */
     private enum Direction {
         Left,
@@ -57,43 +48,30 @@ public class RBTree {
     }
 
     /**
-     * private RBNode rootDummy
-     * <p>
      * A dummy root used (just like the dummy sentinel in Cormen)
      */
     private RBNode rootDummy;
     /**
-     * private int size
-     * <p>
      * A member that holds the number of nodes in the tree
      */
     private int size;
     /**
-     * private RBNode minNode;
-     * <p>
      * Holds the node with the minimum value - for optimizing the "min" function
      */
     private RBNode minNode;
     /**
-     * private RBNode maxNode;
-     * <p>
      * Holds the node with the maximum value - for optimizing the "max" function
      */
     private RBNode maxNode;
     /**
-     * private RBNode nil
-     * <p>
      * A dummy value used as a NULL child for all the leaves in the tree
      */
     private RBNode nil;
 
 
     /**
-     * public RBTree
-     * <p>
      * A default constructor for the RBTree class
      * Works at O(1).
-     * <p>
      * precondition: none
      * postcondition: none
      */
@@ -112,11 +90,8 @@ public class RBTree {
     }
 
     /**
-     * public RBTree(Iterable<Map.Entry<Integer, String>> items)
-     * <p>
      * A constructor for the tree that is initialized with a list of key-value pairs
      * * Works at O(n) where n is the number of key-values pairs in the iterable.
-     * <p>
      * precondition: items != null
      * postcondition: none
      *
@@ -128,11 +103,8 @@ public class RBTree {
     }
 
     /**
-     * public RBTree(Map<Integer, String> map)
-     * <p>
      * A constructor for the tree that is initialized with a given map for the keys and values
      * * Works at O(n) where n is the number of key-values pairs in the map.
-     * <p>
      * precondition: map != null
      * postcondition: none
      *
@@ -144,11 +116,8 @@ public class RBTree {
     }
 
     /**
-     * public void insertItems(Map<Integer, String> map)
-     * <p>
      * Inserts all the items in the map into the tree
      * * Works at O(n) where n is the number of key-values pairs in the map.
-     * <p>
      * precondition: map != null
      * postcondition: none
      *
@@ -159,11 +128,8 @@ public class RBTree {
     }
 
     /**
-     * public void insertItems(Iterable<Map.Entry<Integer, String>> items)
-     * <p>
      * Inserts all the items in the list into the tree.
      * Works at O(n) where n is the number of key-values pairs in the iterable.
-     * <p>
      * precondition: map != null
      * postcondition: none
      *
@@ -176,11 +142,8 @@ public class RBTree {
     }
 
     /**
-     * public void toMap(Map<Integer, String> map)
-     * <p>
      * Inserts all the elements in the tree into the given map
      * Works at O(n) where n is the number of nodes in the tree
-     * <p>
      * precondition: map != null
      * postcondition: none
      *
@@ -191,11 +154,8 @@ public class RBTree {
     }
 
     /**
-     * public TreeMap<Integer, String> toTreeMap()
-     * <p>
      * Returns a representation of the tree as a native java TreeMap
      * Works at O(n) where n is the number of nodes in the tree
-     * <p>
      * precondition: none
      * postcondition: none
      *
@@ -208,9 +168,7 @@ public class RBTree {
     }
 
     /**
-     * public boolean empty()
-     * <p>
-     * returns true if and only if the tree is empty
+     * Returns true if and only if the tree is empty
      *
      * @return Says whether the tree is empty or not
      */
@@ -219,9 +177,7 @@ public class RBTree {
     }
 
     /**
-     * public String search(int k)
-     * <p>
-     * returns the value of an item with key k if it exists in the tree
+     * Returns the value of an item with key k if it exists in the tree
      * otherwise, returns null
      * Works in O(logn) where n is the number of elements in the tree
      *
@@ -235,8 +191,6 @@ public class RBTree {
     }
 
     /**
-     * private RBNode searchNode(int k)
-     * <p>
      * Looks up a RBNode using a search key
      * Works in O(logn) where n is the number of nodes in the tree
      *
@@ -249,8 +203,6 @@ public class RBTree {
     }
 
     /**
-     * private RBNode getPositionByKey(int k)
-     * <p>
      * Gets the node under which to insert a node with the specified key value, or returns the node holding the value
      * Works in O(logn) where n is the number of nodes in the tree
      *
@@ -285,9 +237,7 @@ public class RBTree {
     }
 
     /**
-     * public int insert(int k, String v)
-     * <p>
-     * inserts an item with key k and value v to the red black tree.
+     * Inserts an item with key k and value v to the red black tree.
      * the tree must remain valid (keep its invariants).
      * returns the number of color switches, or 0 if no color switches were necessary.
      * returns -1 if an item with key k already exists in the tree.
@@ -331,8 +281,6 @@ public class RBTree {
     }
 
     /**
-     * private int insertFixup(RBNode toFix)
-     * <p>
      * Fixes the tree to retain it's red-black properties after a node was inserted
      * Works at O(logn)
      *
@@ -380,9 +328,7 @@ public class RBTree {
     }
 
     /**
-     * public int delete(int k)
-     * <p>
-     * deletes an item with key k from the binary tree, if it is there;
+     * Deletes an item with key k from the binary tree, if it is there;
      * the tree must remain valid (keep its invariants).
      * returns the number of color switches, or 0 if no color switches were needed.
      * returns -1 if an item with key k was not found in the tree.
@@ -414,8 +360,6 @@ public class RBTree {
     }
 
     /**
-     * private int deleteNode(RBNode node)
-     * <p>
      * Deletes a node from the RBTree
      * * Works at O(logn)
      *
@@ -464,8 +408,6 @@ public class RBTree {
     }
 
     /**
-     * private int deleteFixup(RBNode x)
-     * <p>
      * Fixes the red-black tree to maintain it's red-black properties after a node was deleted
      * Works at O(logn)
      *
@@ -524,8 +466,6 @@ public class RBTree {
     }
 
     /**
-     * private int setColor(RBNode node, Color color)
-     * <p>
      * Sets the node color to the new color, and counts weather or not it was a color change or not.
      * The function is used to count color changes which actually change color, as opposed to "might" change the color
      *
@@ -541,8 +481,6 @@ public class RBTree {
     }
 
     /**
-     * private RBNode successor(RBNode node)
-     * <p>
      * Finds the successor to a node in the tree.
      * Works at O(logn) where n is the number of nodes in the tree
      * precondition: node != maxNode
@@ -563,8 +501,6 @@ public class RBTree {
     }
 
     /**
-     * private RBNode predecessor(RBNode node)
-     * <p>
      * Finds the predecessor to a node in the tree.
      * Works at O(logn) where n is the number of nodes in the tree
      * precondition: node != minNode
@@ -585,8 +521,6 @@ public class RBTree {
     }
 
     /**
-     * private RBNode subtreeMin(RBNode node)
-     * <p>
      * Finds the smallest value in the current subtree
      * Works at O(logn) where n is the number of nodes in the sub-tree
      * precondition: node != null
@@ -605,8 +539,6 @@ public class RBTree {
     }
 
     /**
-     * private RBNode subtreeMax(RBNode node)
-     * <p>
      * Finds the biggest value in the current subtree
      * Works at O(logn) where n is the number of nodes in the sub-tree
      * precondition: node != null
@@ -625,8 +557,6 @@ public class RBTree {
     }
 
     /**
-     * private RBNode root()
-     * <p>
      * Returns the actual root of the tree (not the dummy root)
      * Works at O(1)
      *
@@ -637,8 +567,6 @@ public class RBTree {
     }
 
     /**
-     * public String min()
-     * <p>
      * Returns the value of the item with the smallest key in the tree,
      * or null if the tree is empty
      * Works at O(1)
@@ -650,8 +578,6 @@ public class RBTree {
     }
 
     /**
-     * public String max()
-     * <p>
      * Returns the value of the item with the largest key in the tree,
      * or null if the tree is empty
      * Works at O(1)
@@ -663,8 +589,6 @@ public class RBTree {
     }
 
     /**
-     * private class IndexedConsumer<T> implements Consumer<T>
-     * <p>
      * Turns a Consumer<T> into a Consumer<T, Integer> where the int is a running counter
      */
     private class IndexedConsumer<T> implements Consumer<T> {
@@ -673,8 +597,6 @@ public class RBTree {
         BiConsumer<T, Integer> base;
 
         /**
-         * public IndexedConsumer(BiConsumer<T, Integer> baseFunction)
-         * <p>
          * Constructor for the class
          *
          * @param baseFunction - The function to call each time we are called by the previous Consumer<T>
@@ -685,8 +607,6 @@ public class RBTree {
         }
 
         /**
-         * public void accept(T arg)
-         * <p>
          * Implements the Consumer<T> interface. Get called each time a new value is ready to be consumed,
          * passes it to the baseFunction together with the calling index
          *
@@ -699,8 +619,6 @@ public class RBTree {
     }
 
     /**
-     * private void walkPreOrder(RBNode node, Consumer<RBNode> consumer)
-     * <p>
      * Applies the given function to all the nodes in the tree in pre-order
      * Works in O(n) where n is the number of nodes in the sub-tree under node
      *
@@ -712,8 +630,6 @@ public class RBTree {
     }
 
     /**
-     * private void walkInOrder(RBNode node, Consumer<RBNode> consumer)
-     * <p>
      * Applies the given function to all the nodes in the tree in order
      * Works in O(n) where n is the number of nodes in the sub-tree under node
      *
@@ -725,8 +641,6 @@ public class RBTree {
     }
 
     /**
-     * private void walkPostOrder(RBNode node, Consumer<RBNode> consumer)
-     * <p>
      * Applies the given function to all the nodes in the tree in post-order
      * Works in O(n) where n is the number of nodes in the sub-tree under node
      *
@@ -738,8 +652,6 @@ public class RBTree {
     }
 
     /**
-     * private void walk(RBNode node, Consumer<RBNode> consumerPre, Consumer<RBNode> consumerIn, Consumer<RBNode> consumerPost)
-     * <p>
      * Walks the given subtree and applies the given functions in pre, post and in-order fashions
      * Works in O(n) where n is the number of nodes in the sub-tree under node
      *
@@ -760,8 +672,6 @@ public class RBTree {
     }
 
     /**
-     * public int[] keysToArray()
-     * <p>
      * Returns a sorted array which contains all keys in the tree,
      * or an empty array if the tree is empty.
      *
@@ -774,8 +684,6 @@ public class RBTree {
     }
 
     /**
-     * public String[] valuesToArray()
-     * <p>
      * Returns an array which contains all values in the tree,
      * sorted by their respective keys,
      * or an empty array if the tree is empty.
@@ -789,10 +697,7 @@ public class RBTree {
     }
 
     /**
-     * public int size()
-     * <p>
      * Returns the number of nodes in the tree.
-     * <p>
      * precondition: none
      * postcondition: none
      *
@@ -803,8 +708,6 @@ public class RBTree {
     }
 
     /**
-     * private Direction oppositeDirection(Direction direction)
-     * <p>
      * Flips the given direction, used for making the insert and delete more symmetric
      * precondition: none
      * postcondition: none
@@ -936,7 +839,6 @@ public class RBTree {
 
         /**
          * RBNode(RBNode parent, RBNode left, RBNode right, Color color, int key, String item) {
-         * <p>
          * A constructor for the RBNode structure that initializes all the members using the given paramenters
          *
          * @param parent The node which to set as parent
@@ -956,8 +858,6 @@ public class RBTree {
         }
 
         /**
-         * RBNode getChild(Direction direction)
-         * <p>
          * Returns the child from the given direction. Used to make direction agnostic code
          * Works in O(1)
          *
@@ -969,8 +869,6 @@ public class RBTree {
         }
 
         /**
-         * void setChild(Direction direction, RBNode node)
-         * <p>
          * Set the child from the given direction. Used to make direction agnostic code
          * Works in O(1)
          *
@@ -986,8 +884,6 @@ public class RBTree {
         }
 
         /**
-         * void rotate(Direction direction)
-         * <p>
          * Rotates the node in the given direction (like done in Cormen to restore the RB properties of a tree)
          * Works in O(1)
          *
@@ -1002,8 +898,6 @@ public class RBTree {
         }
 
         /**
-         * void setLeft(RBNode node)
-         * <p>
          * Sets the left child as the given node
          * Works in O(1)
          *
@@ -1015,8 +909,6 @@ public class RBTree {
         }
 
         /**
-         * void setRight(RBNode node)
-         * <p>
          * Sets the right child as the given node
          * Works in O(1)
          *
@@ -1028,8 +920,6 @@ public class RBTree {
         }
 
         /**
-         * void transplant(RBNode node)
-         * <p>
          * Implements the transplant function (as described in Cormen)
          * Works in O(1)
          *
